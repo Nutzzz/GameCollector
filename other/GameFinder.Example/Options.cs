@@ -115,6 +115,9 @@ public class Options
     [Option("wargaming", HelpText = "Search for Wargaming.Net Game Center games", Hidden = true, Group = "Handlers")]
     public bool Wargaming { get; set; } = false;
 
+    [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = true, Group = "Handlers")]
+    public bool Winget { get; set; } = false;
+
     [Option("xbox", HelpText = "Search for Xbox Games Pass games", Hidden = true, Group = "Handlers")]
     public bool Xbox { get; set; } = false;
 
