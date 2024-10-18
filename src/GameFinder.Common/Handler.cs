@@ -144,6 +144,11 @@ public enum Handler
     [Description("GameCollector.EmuHandlers.MAME")]
     EmuHandler_MAME,
     /// <summary>
+    /// Windows Package Manager package handler
+    /// </summary>
+    [Description("GameCollector.PkgHandlers.Winget")]
+    PkgHandler_Winget,
+    /// <summary>
     /// TheGamesDb.net data handler
     /// </summary>
     [Description("GameCollector.DataHandlers.TheGamesDb")]

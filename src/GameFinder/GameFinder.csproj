@@ -46,6 +46,7 @@
         <ProjectReference Include="..\GameCollector.StoreHandlers.Rockstar\GameCollector.StoreHandlers.Rockstar.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.Ubisoft\GameCollector.StoreHandlers.Ubisoft.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.WargamingNet\GameCollector.StoreHandlers.WargamingNet.csproj" />
+        <ProjectReference Include="..\GameCollector.PkgHandlers.Winget\GameCollector.PkgHandlers.Winget.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.Dolphin\GameCollector.EmuHandlers.Dolphin.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.MAME\GameCollector.EmuHandlers.MAME.csproj" />
     </ItemGroup>

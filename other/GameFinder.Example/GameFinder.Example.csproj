@@ -53,6 +53,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\GameCollector.PkgHandlers.Winget\GameCollector.PkgHandlers.Winget.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!--<ProjectReference Include="..\..\src\GameCollector.DataHandlers.TheGamesDb\GameCollector.DataHandlers.TheGamesDb.csproj" />-->
     </ItemGroup>
 

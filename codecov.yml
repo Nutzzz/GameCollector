@@ -132,6 +132,10 @@ component_management:
       name: Wargaming.net Game Center
       paths:
         - "src/GameCollector.StoreHandlers.WargamingNet/**"
+    - component_id: pkg_handler_winget
+      name: Windows Package Manager
+      paths:
+        - "src/GameCollector.PkgHandlers.Winget/**"
     - component_id: emu_handler_dolphin
       name: Dolphin Emulator
       paths:
