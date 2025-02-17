@@ -1,23 +1,38 @@
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using GameCollector.StoreHandlers.GOG;
 using GameCollector.Wine;
+using JetBrains.Annotations;
 using NexusMods.Paths;
 
 namespace GameCollector.Launcher.Heroic;
 
+/// <summary>
+/// Represents a GOG game installed via Heroic.
+/// </summary>
+[PublicAPI]
 public record HeroicGOGGame(
     GOGGameId Id,
     string Name,
     AbsolutePath Path,
     string BuildId,
-    AbsolutePath WinePrefixPath,
-    DTOs.WineVersion WineVersion) : GOGGame(Id, Name, Path, BuildId)
+    WineData? WineData,
+    OSPlatform Platform) : GOGGame(Id, Name, Path, BuildId)
 {
-    public WinePrefix GetWinePrefix()
+    /// <summary>
+    /// Gets the wine prefix, if any.
+    /// </summary>
+    public WinePrefix? GetWinePrefix()
     {
+        if (WineData is null) return null;
+
         return new WinePrefix
         {
-            ConfigurationDirectory = WinePrefixPath.Combine("pfx"),
+            ConfigurationDirectory = WineData.WinePrefixPath.Combine("pfx"),
             UserName = "steamuser",
         };
     }
 }
+
+[PublicAPI]
+public record WineData(AbsolutePath WinePrefixPath, IReadOnlyDictionary<string, string> EnvironmentVariables, DTOs.WineVersion WineVersion);

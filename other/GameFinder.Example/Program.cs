@@ -280,7 +280,7 @@ public static class Program
     private static void RunHeroicGOGHandler(IFileSystem fileSystem)
     {
         var logger = _provider.CreateLogger(nameof(HeroicGOGHandler));
-        var handler = new HeroicGOGHandler(fileSystem);
+        var handler = new HeroicGOGHandler(fileSystem, logger);
         LogGamesAndErrors(handler.FindAllGames(), logger);
     }
 
