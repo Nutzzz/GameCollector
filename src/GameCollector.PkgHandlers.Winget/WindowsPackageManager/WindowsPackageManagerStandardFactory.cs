@@ -18,10 +18,10 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
 
     protected override T CreateInstance<T>(Guid clsid, Guid iid)
     {
-        var pUnknown = nint.Zero;
+        var pUnknown = IntPtr.Zero;
         try
         {
-            var clsctx = CLSCTX.CLSCTX_LOCAL_SERVER;
+            var clsctx = CLSCTX.CLSCTX_LOCAL_SERVER; //CLSCTX.CLSCTX_ALL;
             if (_allowLowerTrustRegistration)
             {
                 clsctx |= CLSCTX.CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION;
@@ -30,7 +30,7 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
             var hr = PInvoke.CoCreateInstance(clsid, pUnkOuter: null, clsctx, iid, out var result);
 
             //                     !! WARNING !!
-            // An exception may be thrown on the line below if UniGetUI
+            // An exception may be thrown on the line below if this program
             // runs as administrator and AllowLowerTrustRegistration settings is not checked
             // or when WinGet is not installed on the system.
             // It can be safely ignored if any of the conditions
@@ -44,7 +44,7 @@ public class WindowsPackageManagerStandardFactory : WindowsPackageManagerFactory
         {
             // CoCreateInstance and FromAbi both AddRef on the native object.
             // Release once to prevent memory leak.
-            if (pUnknown != nint.Zero)
+            if (pUnknown != IntPtr.Zero)
             {
                 Marshal.Release(pUnknown);
             }

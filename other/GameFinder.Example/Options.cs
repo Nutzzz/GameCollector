@@ -110,7 +110,7 @@ public class Options
     [Option("wargaming", HelpText = "Search for Wargaming.Net Game Center games", Hidden = true, Group = "Handlers")]
     public bool Wargaming { get; set; } = false;
 
-#if WIN64
+#if WINX64
     [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = false, Group = "Handlers")]
 #else
     [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = true, Group = "Handlers")]
@@ -126,21 +126,21 @@ public class Options
     [Option('t', "tgdbapi", HelpText = "Specify TheGamesDb.net API key from <https://api.thegamesdb.net/key.php> (optional)", Hidden = true, MetaValue = "KEY")]
     public string? TheGamesDBAPI { get; set; }
 
-#if WIN64
+#if WINX64
     [Option("heroic", HelpText = "Search for games from Heroic", Hidden = true)]
 #else
     [Option("heroic", HelpText = "Search for games from Heroic", Hidden = false)]
 #endif
     public bool Heroic { get; set; } = false;
 
-#if WIN64
+#if WINX64
     [Option('w', "wine", HelpText = "Search for Wine prefixes", Hidden = true)]
 #else
     [Option('w', "wine", HelpText = "Search for Wine prefixes", Hidden = false)]
 #endif
     public bool Wine { get; set; } = false;
 
-#if WIN64
+#if WINX64
     [Option('b', "bottles", HelpText = "Search for Wine prefixes managed with Bottles", Hidden = true)]
 #else
     [Option('b', "bottles", HelpText = "Search for Wine prefixes managed with Bottles", Hidden = false)]

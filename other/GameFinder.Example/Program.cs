@@ -37,7 +37,7 @@ using GameCollector.StoreHandlers.RobotCache;
 using GameCollector.StoreHandlers.Rockstar;
 using GameCollector.StoreHandlers.Ubisoft;
 using GameCollector.StoreHandlers.WargamingNet;
-#if WIN64
+#if WINX64
 using GameCollector.PkgHandlers.Winget;
 #endif
 using GameCollector.EmuHandlers.Dolphin;
@@ -128,7 +128,6 @@ public static class Program
             options.Epic = true;
             options.GameJolt = true;
             options.GOG = true;
-            options.Heroic = OperatingSystem.IsLinux();
             options.Humble = true;
             options.IG = true;
             options.Itch = true;
@@ -145,9 +144,13 @@ public static class Program
             options.TheGamesDB = false;     // WIP
             options.Ubisoft = true;
             options.Wargaming = true;
-            options.Winget = OperatingSystem.IsWindows();   // Requires TargetFramework net8.0-windows10.0.19041.0
             options.Xbox = true;
+#if WINX64
+            options.Winget = OperatingSystem.IsWindows();   // Requires TargetFramework net8.0-windows10.0.19041.0
+#else
+            options.Heroic = OperatingSystem.IsLinux();
             options.Wine = OperatingSystem.IsLinux();
+#endif
         }
 
         if (OperatingSystem.IsWindows())
@@ -190,8 +193,8 @@ public static class Program
             if (options.Rockstar) tasks.Add(Task.Run(() => RunRockstarHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Ubisoft || options.Uplay) tasks.Add(Task.Run(() => RunUbisoftHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Wargaming || options.WargamingNet) tasks.Add(Task.Run(() => RunWargamingNetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
-#if WIN64
-            if (options.Winget) tasks.Add(Task.Run(() => RunWingetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+#if WINX64
+            if (options.Winget) RunWingetHandler(settings, windowsRegistry, realFileSystem); //tasks.Add(Task.Run(() => RunWingetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
 #endif
             if (options.Dolphin is not null)
             {
@@ -462,7 +465,7 @@ public static class Program
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
-#if WIN64
+#if WINX64
     private static void RunWingetHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
     {
         var logger = _provider.CreateLogger(nameof(WingetHandler));
