@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Description>Library for finding games installed with Plarium Play.</Description>
         <PackageTags>plarium plarium-play games</PackageTags>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

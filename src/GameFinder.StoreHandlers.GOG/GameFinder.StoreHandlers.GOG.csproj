@@ -3,6 +3,7 @@
         <Description>Library for finding games owned and installed with GOG Galaxy.</Description>
         <PackageTags>gog gog-galaxy games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.GOG</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

@@ -3,6 +3,7 @@
         <Description>Library for finding Wine prefixes.</Description>
         <PackageTags>wine games linux</PackageTags>
         <AssemblyName>GameCollector.Wine</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Description>Library for finding games installed with Oculus.</Description>
         <PackageTags>oculus meta oculus-rift oculus-quest meta-quest games</PackageTags>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

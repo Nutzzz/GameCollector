@@ -46,9 +46,6 @@ public class Options
     [Option("gog", HelpText = "Search for GOG GALAXY games", Hidden = true, Group = "Handlers")]
     public bool GOG { get; set; } = false;
 
-    [Option("heroic", HelpText = "Search for games from Heroic", Hidden = true, Group = "Handlers")]
-    public bool Heroic { get; set; } = false;
-
     [Option("humble", HelpText = "Search for Humble App games", Hidden = true, Group = "Handlers")]
     public bool Humble { get; set; } = false;
 
@@ -96,10 +93,8 @@ public class Options
     [Option("steam", HelpText = "Search for Steam games", Hidden = true, Group = "Handlers")]
     public bool Steam { get; set; } = false;
 
-    /*
-    [Option("tgdb", HelpText = "Search for TheGamesDb.net games", Group = "Handlers")]
+    [Option("tgdb", HelpText = "Search for TheGamesDb.net games", Hidden = true, Group = "Handlers")]
     public bool TheGamesDB { get; set; } = false;
-    */
 
     // alias for "ubisoft"
     [Option("uplay", HelpText = "Search for Ubisoft Connect games", Hidden = true)]
@@ -115,21 +110,41 @@ public class Options
     [Option("wargaming", HelpText = "Search for Wargaming.Net Game Center games", Hidden = true, Group = "Handlers")]
     public bool Wargaming { get; set; } = false;
 
+#if WINX64
+    [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = false, Group = "Handlers")]
+#else
+    [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = true, Group = "Handlers")]
+#endif
+    public bool Winget { get; set; } = false;
+
     [Option("xbox", HelpText = "Search for Xbox Games Pass games", Hidden = true, Group = "Handlers")]
     public bool Xbox { get; set; } = false;
 
     [Option('s', "steamapi", HelpText = "Specify Steam API key from <https://steamcommunity.com/dev/apikey> (optional)", MetaValue = "KEY")]
     public string? SteamAPI { get; set; }
 
-    /*
-    [Option('t', "tgdbapi", HelpText = "Specify TheGamesDb.net API key from <https://api.thegamesdb.net/key.php> (optional)", MetaValue = "KEY")]
+    [Option('t', "tgdbapi", HelpText = "Specify TheGamesDb.net API key from <https://api.thegamesdb.net/key.php> (optional)", Hidden = true, MetaValue = "KEY")]
     public string? TheGamesDBAPI { get; set; }
-    */
 
-    [Option('w', "wine", HelpText = "Search for Wine prefixes")]
+#if WINX64
+    [Option("heroic", HelpText = "Search for games from Heroic", Hidden = true)]
+#else
+    [Option("heroic", HelpText = "Search for games from Heroic", Hidden = false)]
+#endif
+    public bool Heroic { get; set; } = false;
+
+#if WINX64
+    [Option('w', "wine", HelpText = "Search for Wine prefixes", Hidden = true)]
+#else
+    [Option('w', "wine", HelpText = "Search for Wine prefixes", Hidden = false)]
+#endif
     public bool Wine { get; set; } = false;
 
-    [Option('b', "bottles", HelpText = "Search for Wine prefixes managed with Bottles")]
+#if WINX64
+    [Option('b', "bottles", HelpText = "Search for Wine prefixes managed with Bottles", Hidden = true)]
+#else
+    [Option('b', "bottles", HelpText = "Search for Wine prefixes managed with Bottles", Hidden = false)]
+#endif
     public bool Bottles { get; set; } = false;
 
     [Option('i', "installed", HelpText = "Only retrieve installed games")]

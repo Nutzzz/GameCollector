@@ -3,6 +3,7 @@
         <Description>Library for finding games installed with EA Desktop.</Description>
         <PackageTags>ea ea-desktop ea-app games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.EADesktop</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -3,6 +3,7 @@
         <Description>Library for finding games owned and installed with the Epic Games Store.</Description>
         <PackageTags>epic egs epic-games-store games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.EGS</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

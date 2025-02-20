@@ -3,6 +3,7 @@
         <Description>Library for finding games installed with Origin.</Description>
         <PackageTags>ea origin games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.Origin</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

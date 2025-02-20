@@ -37,6 +37,9 @@ using GameCollector.StoreHandlers.RobotCache;
 using GameCollector.StoreHandlers.Rockstar;
 using GameCollector.StoreHandlers.Ubisoft;
 using GameCollector.StoreHandlers.WargamingNet;
+#if WINX64
+using GameCollector.PkgHandlers.Winget;
+#endif
 using GameCollector.EmuHandlers.Dolphin;
 using GameCollector.EmuHandlers.MAME;
 //using GameCollector.DataHandlers.TheGamesDb;
@@ -51,7 +54,6 @@ using FileSystem = NexusMods.Paths.FileSystem;
 using IFileSystem = NexusMods.Paths.IFileSystem;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-[assembly: ExcludeFromCodeCoverage]
 namespace GameCollector;
 
 public static class Program
@@ -115,23 +117,22 @@ public static class Program
 
         var settings = new Settings(options.Installed, options.Parent || options.Base, options.Owned, options.Games);
 
-        if (options.All) // Enable all emulator and handlers
+        if (options.All) // Enable all handlers
         {
             options.Amazon = true;
             options.Arc = true;
             options.BattleNet = true;
             options.BigFish = true;
-            //options.Dolphin ??= "";
+            //options.Dolphin ??= "";       // needs path
             options.EA = true;
             options.Epic = true;
             options.GameJolt = true;
             options.GOG = true;
-            options.Heroic = true;
             options.Humble = true;
             options.IG = true;
             options.Itch = true;
             options.Legacy = true;
-            //options.MAME ??= "";
+            //options.MAME ??= "";          // needs path
             options.Oculus = true;
             options.Origin = true;
             options.Paradox = true;
@@ -140,10 +141,16 @@ public static class Program
             options.RobotCache = true;
             options.Rockstar = true;
             options.Steam = true;
-            //options.TheGamesDB = true;
+            options.TheGamesDB = false;     // WIP
             options.Ubisoft = true;
             options.Wargaming = true;
             options.Xbox = true;
+#if WINX64
+            options.Winget = OperatingSystem.IsWindows();   // Requires TargetFramework net8.0-windows10.0.19041.0
+#else
+            options.Heroic = OperatingSystem.IsLinux();
+            options.Wine = OperatingSystem.IsLinux();
+#endif
         }
 
         if (OperatingSystem.IsWindows())
@@ -186,7 +193,9 @@ public static class Program
             if (options.Rockstar) tasks.Add(Task.Run(() => RunRockstarHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Ubisoft || options.Uplay) tasks.Add(Task.Run(() => RunUbisoftHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Wargaming || options.WargamingNet) tasks.Add(Task.Run(() => RunWargamingNetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
-
+#if WINX64
+            if (options.Winget) RunWingetHandler(settings, windowsRegistry, realFileSystem); //tasks.Add(Task.Run(() => RunWingetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+#endif
             if (options.Dolphin is not null)
             {
                 tasks.Add(Task.Run(() =>
@@ -456,6 +465,20 @@ public static class Program
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
+#if WINX64
+    private static void RunWingetHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
+    {
+        var logger = _provider.CreateLogger(nameof(WingetHandler));
+        if (OperatingSystem.IsWindows())
+        {
+            var handler = new WingetHandler(registry, fileSystem, logger); //, logger);
+            LogGamesAndErrors(handler.FindAllGames(settings), logger);
+        }
+        else
+            logger.LogError("Handler requires Windows-only target.");
+    }
+#endif
+
     private static void RunDolphinHandler(Settings settings, IRegistry registry, IFileSystem fileSystem, AbsolutePath path)
     {
         var logger = _provider.CreateLogger(nameof(DolphinHandler));
@@ -470,15 +493,16 @@ public static class Program
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
-    /*
     private static async void RunTheGamesDbHandler(IFileSystem fileSystem, string? tgdbApi, Settings settings)
     {
-        var logger = _provider.CreateLogger(nameof(TheGamesDbHandler));
+        var logger = _provider.CreateLogger("TheGamesDbHandler");
+        logger.LogError("Handler not yet implemented.");
+        /*
         //var handler = new TheGamesDbHandler(fileSystem, tgdbApi, registry: null, logger);
         var handler = new TheGamesDbHandler(fileSystem, registry: null, logger);
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
+        */
     }
-    */
 
     private static List<AWinePrefix> LogWinePrefixes<TWinePrefix>(IWinePrefixManager<TWinePrefix> prefixManager, ILogger logger)
     where TWinePrefix : AWinePrefix

@@ -6,7 +6,7 @@
 
 .NET library for finding games. GameCollector expands on upstream GameFinder (which is primarily designed to support modding tools), by adding additional supported store launchers, emulators, and data sources, and includes additional information about each game (sufficient for a multi-store game launcher such as [GLC](https://github.com/Solaire/GLC)). This fork is indebted to erri120's hard work, but as [he is reticent](https://github.com/erri120/GameFinder/issues/49) to expand the scope of GameFinder, GameCollector continues with a different philosophy.
 
-The following launchers and emulators are supported:
+The following launchers, emulators, and package managers are supported:
 
 | handler | package |
 | -- | -- |
@@ -36,6 +36,7 @@ The following launchers and emulators are supported:
 | [Steam](#steam) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Steam)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Steam) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Steam?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Steam) |
 | Ubisoft Connect | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Ubisoft)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Ubisoft) |
 | Wargaming.net Game Center | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.WargamingNet)](https://www.nuget.org/packages/GameCollector.StoreHandlers.WargamingNet) |
+| Windows Package Manager | [![Nuget](https://img.shields.io/nuget/v/GameCollector.PkgHandlers.Winget)](https://www.nuget.org/packages/GameCollector.PkgHandlers.Winget) |
 | [Xbox Game Pass](#xbox-game-pass) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Xbox)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Xbox) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Xbox?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Xbox) |
 
 If you are interested in understanding _how_ GameCollector/GameFinder finds these games, check [the upstream wiki](https://github.com/erri120/GameFinder/wiki) for more information (descriptions of the added handlers should eventually be added to a wiki here).
@@ -97,6 +98,12 @@ The TGame implementations of GameCollector's handlers inherit a generic GameData
   - `Dictionary<string, List<string>>? Metadata`
 
 The Metadata dictionary may include (depending on available information): "ReleaseDate", "Description", "Developers", "Publishers", "Genres", "ImageUrl", etc.
+
+### Supported Package Managers
+
+This is a new category of handler for GameCollector. It is Windows-only for now.
+
+- Winget
 
 ### Supported Emulators
 
@@ -418,7 +425,7 @@ Self-contained deployments and executables can be [trimmed](https://learn.micros
 
 **NOT Trimmable**:
 
-- `GameCollector.StoreHandlers.EADesktop`: This package references `System.Management`, which is **not trimmable** due to COM interop issues. See [dotnet/runtime#78038](https://github.com/dotnet/runtime/issues/78038), [dotnet/runtime#75176](https://github.com/dotnet/runtime/pull/75176) and [dotnet/runtime#61960](https://github.com/dotnet/runtime/issues/61960) for more details.
+- `GameCollector.StoreHandlers.EADesktop` and `GameCollector.PkgHandlers.Winget`: These packages reference `System.Management`, which is **not trimmable** due to COM interop issues. See [dotnet/runtime#78038](https://github.com/dotnet/runtime/issues/78038), [dotnet/runtime#75176](https://github.com/dotnet/runtime/pull/75176) and [dotnet/runtime#61960](https://github.com/dotnet/runtime/issues/61960) for more details.
 
 I recommend looking at the [project file](./other/GameFinder.Example/GameFinder.Example.csproj) of the example project, if you run into warnings or errors with trimming.
 

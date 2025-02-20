@@ -16,7 +16,6 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 **WIP**:
 
-- Add [PkgHandlers](https://github.com/Nutzzz/GameCollector/pull/40) to find installed software, and to download free games
 - Add [DataHandlers](https://github.com/Nutzzz/GameCollector/pull/13) to download metadata and images from online sources
 
 ## [Released](https://github.com/Nutzzz/GameCollector/releases)
@@ -26,6 +25,7 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 ## Added
 
 - Upstream: Heroic (GOG): Support Linux native games
+- Add Winget package handler to detect installed apps and free game packages
 
 ## [4.4.0-1](https://github.com/erri120/GameFinder/compare/v4.3.2.1...v4.4.0.1) - 2024-12-11
 
@@ -33,6 +33,8 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 - Upstream: GOG & Heroic (GOG): Add `BuildId`
 - Steam: Check for empty manifest file
+
+## [4.3.3-1](https://github.com/Nutzzz/GameCollector/compare/v4.3.2.1...v4.3.3.1) - 2024-10-09
 
 ### Fixed
 

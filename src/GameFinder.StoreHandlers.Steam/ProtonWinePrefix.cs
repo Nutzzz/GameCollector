@@ -1,3 +1,4 @@
+#if !WIN64
 using System.Diagnostics.CodeAnalysis;
 using GameCollector.Wine;
 using JetBrains.Annotations;
@@ -53,3 +54,4 @@ public record ProtonWinePrefix : AWinePrefix
         return ProtonDirectory.Combine("version");
     }
 }
+#endif

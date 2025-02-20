@@ -77,6 +77,7 @@ public sealed record SteamGame(AbsolutePath SteamPath,
     /// </summary>
     public AbsolutePath GetCloudSavesDirectoryPath() => AppManifest is not null ? AppManifest.GetUserDataDirectoryPath(SteamPath) : new();
 
+#if !WIN64
     /// <summary>
     /// Gets the Wine prefix managed by Proton for this game, if it exists.
     /// </summary>
@@ -92,6 +93,7 @@ public sealed record SteamGame(AbsolutePath SteamPath,
             ProtonDirectory = protonDirectory,
         };
     }
+#endif
 
     /// <summary>
     /// Uses <see cref="WorkshopManifestParser"/> to parse the workshop manifest

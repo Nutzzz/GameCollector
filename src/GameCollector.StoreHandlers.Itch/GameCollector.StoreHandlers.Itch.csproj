@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Description>Library for finding games owned and installed with itch.</Description>
         <PackageTags>itch games</PackageTags>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

@@ -3,6 +3,7 @@
         <Description>Library for finding games owned and installed with Steam.</Description>
         <PackageTags>valve steam games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.Steam</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +18,7 @@
     <ItemGroup>
         <ProjectReference Include="..\GameFinder.Common\GameFinder.Common.csproj" />
         <ProjectReference Include="..\GameFinder.RegistryUtils\GameFinder.RegistryUtils.csproj" />
-        <ProjectReference Include="..\GameFinder.Wine\GameFinder.Wine.csproj" />
+		<ProjectReference Include="..\GameFinder.Wine\GameFinder.Wine.csproj" />
     </ItemGroup>
 
     <ItemGroup>

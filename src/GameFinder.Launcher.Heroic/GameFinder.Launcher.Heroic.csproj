@@ -1,9 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>GameCollector.Launcher.Heroic</AssemblyName>
         <IsTrimmable>false</IsTrimmable>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
-
+	
     <ItemGroup>
         <ProjectReference Include="..\GameFinder.StoreHandlers.GOG\GameFinder.StoreHandlers.GOG.csproj" />
         <ProjectReference Include="..\GameFinder.Wine\GameFinder.Wine.csproj" />

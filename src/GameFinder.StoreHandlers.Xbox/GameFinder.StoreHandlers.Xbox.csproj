@@ -3,6 +3,7 @@
         <Description>Library for finding games installed with Xbox Game Pass.</Description>
         <PackageTags>xbox game pass games</PackageTags>
         <AssemblyName>GameCollector.StoreHandlers.Xbox</AssemblyName>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

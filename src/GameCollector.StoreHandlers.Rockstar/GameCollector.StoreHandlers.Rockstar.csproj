@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Description>Library for finding games installed with Rockstar Games Launcher.</Description>
         <PackageTags>rockstar games</PackageTags>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

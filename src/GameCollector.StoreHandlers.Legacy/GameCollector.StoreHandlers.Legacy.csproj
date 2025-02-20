@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Description>Library for finding games installed with Legacy Games Launcher.</Description>
         <PackageTags>legacy legacy-games games</PackageTags>
+        <Platforms>AnyCPU;x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
