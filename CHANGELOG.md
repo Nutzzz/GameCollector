@@ -186,6 +186,10 @@ Initial release of GameCollector
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
 
+## [4.6.0](https://github.com/erri120/GameFinder/compare/v4.5.0...v4.6.0) - 2025-03-26
+
+- Upgrade to .NET 9
+
 ## [4.5.0](https://github.com/erri120/GameFinder/compare/v4.4.0...v4.5.0) - 2025-02-17
 
 - Heroic (GOG): Support linux native games
