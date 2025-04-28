@@ -16,8 +16,12 @@ public readonly partial struct HumbleGameId : IAugmentWith<DefaultEqualityCompar
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class HumbleGameIdComparer : IEqualityComparer<HumbleGameId>
+public class HumbleGameIdComparer(StringComparison stringComparison) : IEqualityComparer<HumbleGameId>
 {
     private static HumbleGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class HumbleGameIdComparer : IEqualityComparer<HumbleGameId>
     /// </summary>
     public static HumbleGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public HumbleGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public HumbleGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(HumbleGameId x, HumbleGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

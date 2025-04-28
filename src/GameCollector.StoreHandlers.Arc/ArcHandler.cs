@@ -20,34 +20,28 @@ namespace GameCollector.StoreHandlers.Arc;
 ///     or
 ///   HKCU\Software\Arc\Core
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class ArcHandler : AHandler<ArcGame, ArcGameId>
+public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<ArcGame, ArcGameId>
 {
     internal const string ArcRegKey = @"SOFTWARE\Perfect World Entertainment";
     internal const string ArcRegKey2 = @"Software\Arc";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public ArcHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override Func<ArcGame, ArcGameId> IdSelector => game => game.AppId;

@@ -32,7 +32,7 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
     /// </param>
     /// <param name="registry">
     /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
+    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
     /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
     /// of the interface.
     /// </param>
@@ -144,7 +144,7 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
 
     private List<(ulong userId, uint timeStamp, bool autoLogin)>? ParseLoginUsersFile()
     {
-        List<(ulong, uint, bool)> userList = new();
+        List<(ulong, uint, bool)> userList = [];
         try
         {
             KVValue autoUser = "";

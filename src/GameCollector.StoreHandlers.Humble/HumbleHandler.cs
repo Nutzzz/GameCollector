@@ -23,8 +23,22 @@ namespace GameCollector.StoreHandlers.Humble;
 /// and Registry key:
 ///   HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class HumbleHandler : AHandler<HumbleGame, HumbleGameId>
+public class HumbleHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<HumbleGame, HumbleGameId>
 {
     internal const string UninstallRegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
 
@@ -37,28 +51,8 @@ public class HumbleHandler : AHandler<HumbleGame, HumbleGameId>
         TypeInfoResolver = SourceGenerationContext.Default,
     };
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public HumbleHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<HumbleGameId>? IdEqualityComparer => HumbleGameIdComparer.Default;
@@ -210,7 +204,7 @@ public class HumbleHandler : AHandler<HumbleGame, HumbleGameId>
                     youtube = game.CarouselContent.YoutubeLink[0];
                 }
 
-                List<string> publishers = new();
+                List<string> publishers = [];
                 if (game.Publishers is not null)
                 {
                     foreach (var publisher in game.Publishers)
@@ -220,7 +214,7 @@ public class HumbleHandler : AHandler<HumbleGame, HumbleGameId>
                     }
                 }
 
-                List<string> developers = new();
+                List<string> developers = [];
                 if (game.Developers is not null)
                 {
                     foreach (var developer in game.Developers)

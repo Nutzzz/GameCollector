@@ -16,8 +16,12 @@ public readonly partial struct DolphinGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class DolphinGameIdComparer : IEqualityComparer<DolphinGameId>
+public class DolphinGameIdComparer(StringComparison stringComparison) : IEqualityComparer<DolphinGameId>
 {
     private static DolphinGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class DolphinGameIdComparer : IEqualityComparer<DolphinGameId>
     /// </summary>
     public static DolphinGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public DolphinGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public DolphinGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(DolphinGameId x, DolphinGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

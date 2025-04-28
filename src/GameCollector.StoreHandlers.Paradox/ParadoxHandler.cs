@@ -9,8 +9,9 @@ using GameFinder.RegistryUtils;
 using GameCollector.Common;
 using JetBrains.Annotations;
 using NexusMods.Paths;
-using NexusMods.Paths.Extensions;
 using OneOf;
+using GameCollector.StoreHandlers.Paradox;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameCollector.StoreHandlers.Paradox;
 
@@ -22,8 +23,22 @@ namespace GameCollector.StoreHandlers.Paradox;
 ///   %AppData%\Paradox Interactive\launcher-v2\userSettings.json
 ///   %AppData%\Paradox Interactive\launcher-v2\game-metadata\game-metadata
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class ParadoxHandler : AHandler<ParadoxGame, ParadoxGameId>
+public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<ParadoxGame, ParadoxGameId>
 {
     internal const string ParadoxRegKey = @"Software\Paradox Interactive\Paradox Launcher v2";
 
@@ -36,28 +51,8 @@ public class ParadoxHandler : AHandler<ParadoxGame, ParadoxGameId>
         TypeInfoResolver = SourceGenerationContext.Default,
     };
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public ParadoxHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<ParadoxGameId>? IdEqualityComparer => ParadoxGameIdComparer.Default;
@@ -90,52 +85,65 @@ public class ParadoxHandler : AHandler<ParadoxGame, ParadoxGameId>
     Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
     public override IEnumerable<OneOf<ParadoxGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
+        List<OneOf<ParadoxGame, ErrorMessage>> games = [];
+
         var pdxPath = GetParadoxV2Path();
         var userFile = pdxPath.Combine("userSettings.json");
-        if (!userFile.FileExists)
-        {
-            yield return new ErrorMessage($"The file {userFile.GetFullPath()} does not exist!");
-            yield break;
-        }
-
-        using var userStream = userFile.Read();
-        var userSettings = JsonSerializer.Deserialize<UserSettings>(userStream, JsonSerializerOptions);
-        if (userSettings is null)
-        {
-            yield return new ErrorMessage($"Unable to deserialize file {userFile.GetFullPath()}");
-            yield break;
-        }
-
         Dictionary<string, string?> instPaths = new(StringComparer.OrdinalIgnoreCase);
-        foreach (var libPath in userSettings.GameLibraryPaths)
-        {
-            if (libPath.ValueKind == JsonValueKind.String)
-                instPaths["default"] = libPath.ToString();
-            else if (libPath.ValueKind == JsonValueKind.Object)
-            {
-                if (libPath.TryGetProperty("gameId", out var id) &&
-                    libPath.TryGetProperty("installationPath", out var path))
+        Dictionary<string, ulong?> runDates = new(StringComparer.OrdinalIgnoreCase);
 
-                    instPaths[id.ToString()] = path.ToString();
+        try
+        {
+            if (!userFile.FileExists)
+                return [new ErrorMessage($"The file {userFile.GetFullPath()} does not exist!")];
+ 
+            using var userStream = userFile.Read();
+            if (userStream.Length == 0)
+                return [new ErrorMessage($"File {userFile.GetFullPath()} is empty!")];
+         
+            var userSettings = JsonSerializer.Deserialize<UserSettings>(userStream, JsonSerializerOptions);
+            if (userSettings is null)
+                return [new ErrorMessage($"Unable to deserialize file {userFile.GetFullPath()}")];
+
+            foreach (var libPath in userSettings.GameLibraryPaths)
+            {
+                if (libPath.ValueKind == JsonValueKind.String)
+                    instPaths["default"] = libPath.ToString();
+                else if (libPath.ValueKind == JsonValueKind.Object)
+                {
+                    if (libPath.TryGetProperty("gameId", out var id) &&
+                        libPath.TryGetProperty("installationPath", out var path))
+
+                        instPaths[id.ToString()] = path.ToString();
+                }
+            }
+            var gamesLaunched = userSettings.GamesLaunched;
+            foreach (var obj in gamesLaunched.EnumerateObject())
+            {
+                _ = ulong.TryParse(obj.Value.ToString(), out var date);
+                runDates.Add(obj.Name, date > 0 ? date : null);
             }
         }
-        Dictionary<string, ulong?> runDates = new(StringComparer.OrdinalIgnoreCase);
-        var gamesLaunched = userSettings.GamesLaunched;
-        foreach (var obj in gamesLaunched.EnumerateObject())
+        catch (Exception e)
         {
-            _ = ulong.TryParse(obj.Value.ToString(), out var date);
-            runDates.Add(obj.Name, date > 0 ? date : null);
+            return [new ErrorMessage(e, $"Exception deserializing file {userFile.GetFullPath()}!")];
         }
 
         var metaFile = pdxPath.Combine("game-metadata").Combine("game-metadata");
-        if (!metaFile.FileExists)
+        GameMetadata? metadata;
+        try
         {
-            yield return new ErrorMessage($"The file {metaFile.GetFullPath()} does not exist!");
-            yield break;
+            if (!metaFile.FileExists)
+                return [new ErrorMessage($"The file {metaFile.GetFullPath()} does not exist!")];
+
+            using var metaStream = metaFile.Read();
+            metadata = JsonSerializer.Deserialize<GameMetadata>(metaStream, JsonSerializerOptions);
+        }
+        catch (Exception e)
+        {
+            return [new ErrorMessage(e, $"Exception parsing {metaFile.GetFullPath()}!")];
         }
 
-        using var metaStream = metaFile.Read();
-        var metadata = JsonSerializer.Deserialize<GameMetadata>(metaStream, JsonSerializerOptions);
         if (metadata is not null && metadata.Data is not null && metadata.Data.Games is not null)
         {
             foreach (var game in metadata.Data.Games)
@@ -173,45 +181,54 @@ public class ParadoxHandler : AHandler<ParadoxGame, ParadoxGameId>
                     if (Path.IsPathRooted(strPath))
                         path = _fileSystem.FromUnsanitizedFullPath(strPath);
                     else
-                        path = GetParadoxV2Path().Combine(strPath.ToRelativePath());
+                        path = GetParadoxV2Path().Combine(strPath);
                 }
-
                 AbsolutePath dataPath = new();
                 if (path != default && path.DirectoryExists() && (exe == default || !exe.FileExists))
                 {
                     var settingsFile = path.Combine("launcher-settings.json");
-                    using var settingsStream = settingsFile.Read();
-                    var launchSettings = JsonSerializer.Deserialize<LauncherSettings>(settingsStream, JsonSerializerOptions);
-                    if (launchSettings is not null && launchSettings.ExePath is not null)
+                    try
                     {
-                        exe = path.Combine(launchSettings.ExePath);
-                        if (launchSettings.GameDataPath is not null)
+                        using var settingsStream = settingsFile.Read();
+                        var launchSettings = JsonSerializer.Deserialize<LauncherSettings>(settingsStream, JsonSerializerOptions);
+                        if (launchSettings is not null && launchSettings.ExePath is not null)
                         {
-                            var strDataPath = launchSettings.GameDataPath.Replace("%USER_DOCUMENTS%",
-                                _fileSystem.GetKnownPath(KnownPath.MyDocumentsDirectory).GetFullPath(), StringComparison.Ordinal);
-                            dataPath = _fileSystem.FromUnsanitizedFullPath(strDataPath);
+                            exe = path.Combine(launchSettings.ExePath);
+                            if (launchSettings.GameDataPath is not null)
+                            {
+                                var strDataPath = launchSettings.GameDataPath.Replace("%USER_DOCUMENTS%",
+                                    _fileSystem.GetKnownPath(KnownPath.MyDocumentsDirectory).GetFullPath(), StringComparison.Ordinal);
+                                dataPath = _fileSystem.FromUnsanitizedFullPath(strDataPath);
+                            }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        games.Add(new ErrorMessage(e, $"Exception parsing {settingsFile.GetFullPath()}!"));
                     }
                     if (exe == default || !exe.FileExists)
                         exe = Utils.FindExe(path, _fileSystem, name);
-                }
 
-                yield return new ParadoxGame(
-                    Id: ParadoxGameId.From(id ?? ""),
-                    Name: name,
-                    InstallationPath: path,
-                    GameDataPath: dataPath,
-                    ExePath: exe,
-                    ExeArgs: args,
-                    AppIcon: Path.IsPathRooted(strIcon) ? _fileSystem.FromUnsanitizedFullPath(strIcon) : new(),
-                    LastLaunch: lastLaunch,
-                    AppTaskbarIcon: Path.IsPathRooted(strTaskIcon) ? _fileSystem.FromUnsanitizedFullPath(strTaskIcon) : new(),
-                    Background: Path.IsPathRooted(strBg) ? _fileSystem.FromUnsanitizedFullPath(strBg) : new(),
-                    Logo: Path.IsPathRooted(strLogo) ? _fileSystem.FromUnsanitizedFullPath(strLogo) : new()
-                );
+                    games.Add(new ParadoxGame(
+                        Id: ParadoxGameId.From(id ?? ""),
+                        Name: name,
+                        InstallationPath: path,
+                        GameDataPath: dataPath,
+                        ExePath: exe,
+                        ExeArgs: args,
+                        AppIcon: Path.IsPathRooted(strIcon) ? _fileSystem.FromUnsanitizedFullPath(strIcon) : new(),
+                        LastLaunch: lastLaunch,
+                        AppTaskbarIcon: Path.IsPathRooted(strTaskIcon) ? _fileSystem.FromUnsanitizedFullPath(strTaskIcon) : new(),
+                        Background: Path.IsPathRooted(strBg) ? _fileSystem.FromUnsanitizedFullPath(strBg) : new(),
+                        Logo: Path.IsPathRooted(strLogo) ? _fileSystem.FromUnsanitizedFullPath(strLogo) : new()
+                    ));
+                }
             }
         }
+
+        return games;
     }
+
     public AbsolutePath GetParadoxV1Path()
     {
         return _fileSystem.GetKnownPath(KnownPath.LocalApplicationDataDirectory)

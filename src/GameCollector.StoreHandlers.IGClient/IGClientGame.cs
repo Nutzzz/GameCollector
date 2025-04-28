@@ -52,15 +52,15 @@ public record IGClientGame(IGClientGameId IdKeyName,
              IsInstalled: IsInstalled,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { DescriptionShort ?? "", },
-                 ["DescriptionLong"] = new() { DescriptionLong ?? "", },
-                 ["ImageUrl"] = new() { DevImage ?? "", },
-                 ["ImageWideUrl"] = new() { DevCover ?? "", },
-                 ["SluggedName"] = new() { SluggedName ?? "", },
-                 ["Players"] = new() { SpecsToNumPlayers(Specs?.ToList<string>()).ToString(CultureInfo.InvariantCulture) ?? "", },
-                 ["Genres"] = Categories?.ToList<string>() ?? new List<string>(),
-                 ["Tags"] = Tags?.ToList<string>() ?? new List<string>(),
-                 ["Rating"] = new() { AvgRating.ToString(CultureInfo.InvariantCulture) ?? "", },
+                 ["Description"] = [DescriptionShort ?? "",],
+                 ["DescriptionLong"] = [DescriptionLong ?? "",],
+                 ["ImageUrl"] = [DevImage ?? "",],
+                 ["ImageWideUrl"] = [DevCover ?? "",],
+                 ["SluggedName"] = [SluggedName ?? "",],
+                 ["Players"] = [SpecsToNumPlayers(Specs?.ToList()).ToString(CultureInfo.InvariantCulture) ?? "",],
+                 ["Genres"] = Categories?.ToList() ?? [],
+                 ["Tags"] = Tags?.ToList() ?? [],
+                 ["Rating"] = [AvgRating.ToString(CultureInfo.InvariantCulture) ?? "",],
              })
 {
     internal static int SpecsToNumPlayers(List<string>? specs)

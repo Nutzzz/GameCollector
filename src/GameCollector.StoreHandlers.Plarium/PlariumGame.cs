@@ -35,8 +35,8 @@ public record PlariumGame(PlariumGameId ProductId,
              LaunchArgs: LaunchArgs,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["GameId"] = new() { GameId ?? "", },
-                 ["ShortName"] = new() { GameName ?? "", },
-                 ["Developers"] = new() { CompanyName ?? "", },
-                 ["IconUrl"] = new() { string.IsNullOrEmpty(GameName) ? "" : $"https://cdn01.x-plarium.com/browser/content/plarium-play/games/notification_img/{GameName}.webp" },
+                 ["GameId"] = [GameId ?? "",],
+                 ["ShortName"] = [GameName ?? "",],
+                 ["Developers"] = [CompanyName ?? "",],
+                 ["IconUrl"] = [string.IsNullOrEmpty(GameName) ? "" : $"https://cdn01.x-plarium.com/browser/content/plarium-play/games/notification_img/{GameName}.webp"],
              });

@@ -101,12 +101,12 @@ public static class Program
             .WithParsed(x => Run(x, logger));
     }
 
-    private async static void Run(Options options, ILogger logger)
+    private static async void Run(Options options, ILogger logger)
     {
         var realFileSystem = FileSystem.Shared;
         CancellationTokenSource cancelSource = new();
         var cancelToken = cancelSource.Token;
-        List<Task> tasks = new();
+        List<Task> tasks = [];
 
         var logFile = realFileSystem.GetKnownPath(KnownPath.CurrentDirectory).Combine("log.log");
         if (realFileSystem.FileExists(logFile)) realFileSystem.DeleteFile(logFile);
@@ -242,7 +242,7 @@ public static class Program
                     var wineRegistry = winePrefix.CreateRegistry(realFileSystem);
 
                     if (options.GOG) RunGOGHandler(settings, wineRegistry, wineFileSystem);
-                    if (options.Epic) RunEGSHandler(settings, wineRegistry, wineFileSystem);
+                    if (options.Epic || options.EGS) RunEGSHandler(settings, wineRegistry, wineFileSystem);
                     if (options.Origin) RunOriginHandler(settings, wineFileSystem);
                     if (options.Xbox) RunXboxHandler(settings, wineFileSystem);
                 }
@@ -257,7 +257,7 @@ public static class Program
 
         //if (options.TheGamesDB) tasks.Add(Task.Run(() => RunTheGamesDbHandler(settings, realFileSystem, options.TheGamesDBAPI), cancelToken));
 
-        Task.WaitAll(tasks.ToArray(), cancelToken);
+        Task.WaitAll([.. tasks], cancelToken);
 
         /*
         Parallel.ForEach(tasks, task =>
@@ -354,7 +354,7 @@ public static class Program
     private static void RunBattleNetHandler(Settings settings, IFileSystem fileSystem)
     {
         var logger = _provider.CreateLogger(nameof(BattleNetHandler));
-        var handler = new BattleNetHandler(fileSystem, null);
+        var handler = new BattleNetHandler(fileSystem, registry: null);
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 

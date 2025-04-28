@@ -20,35 +20,29 @@ namespace GameCollector.StoreHandlers.BigFish;
 /// Uses Registry key:
 ///   HKLM32\SOFTWARE\Big Fish Games\Persistence
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class BigFishHandler : AHandler<BigFishGame, BigFishGameId>
+public class BigFishHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<BigFishGame, BigFishGameId>
 {
     internal const string BigFishUrl = "https://www.bigfishgames.com/games/";
     internal const string BigFishRegKey = @"SOFTWARE\Big Fish Games";
     internal const string UninstallRegKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public BigFishHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<BigFishGameId>? IdEqualityComparer => BigFishGameIdComparer.Default;

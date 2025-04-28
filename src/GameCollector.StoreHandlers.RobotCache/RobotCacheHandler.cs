@@ -20,8 +20,16 @@ namespace GameCollector.StoreHandlers.RobotCache;
 /// Uses json file:
 ///   %AppDataLocal%\RobotCache\RobotCacheClient\config\appConfig.json
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class RobotCacheHandler : AHandler<RobotCacheGame, RobotCacheGameId>
+public class RobotCacheHandler(IFileSystem fileSystem) : AHandler<RobotCacheGame, RobotCacheGameId>
 {
     private readonly JsonSerializerOptions JsonSerializerOptions =
         new()
@@ -33,20 +41,7 @@ public class RobotCacheHandler : AHandler<RobotCacheGame, RobotCacheGameId>
             TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public RobotCacheHandler(IFileSystem fileSystem)
-    {
-        _fileSystem = fileSystem;
-    }
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override Func<RobotCacheGame, RobotCacheGameId> IdSelector => game => game.Id;
@@ -89,8 +84,8 @@ public class RobotCacheHandler : AHandler<RobotCacheGame, RobotCacheGameId>
             yield break;
         }
 
-        List<string> libPaths = new();
-        List<AbsolutePath> infoFiles = new();
+        List<string> libPaths = [];
+        List<AbsolutePath> infoFiles = [];
 
         using var stream = configFile.Read();
         var config = JsonSerializer.Deserialize<AppConfigFile>(stream, JsonSerializerOptions);
@@ -156,7 +151,7 @@ public class RobotCacheHandler : AHandler<RobotCacheGame, RobotCacheGameId>
 
         try
         {
-            foreach (var iconFile in _fileSystem.EnumerateFiles(infoFile.Parent.Parent.Parent.Combine("icons"), $"{id}*.ico", recursive: false))
+            foreach (var iconFile in _fileSystem.EnumerateFiles(infoFile.Parent.Parent.Parent.Combine("icons"), $"{id.ToString(CultureInfo.InvariantCulture)}*.ico", recursive: false))
             {
                 icon = iconFile;
                 break;

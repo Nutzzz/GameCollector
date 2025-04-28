@@ -38,7 +38,7 @@ public record RockstarGame(RockstarGameId Id,
              UninstallArgs: UninstallArgs,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Publisher"] = new() { Publisher },
-                 ["WebInfo"] = new() { UrlInfoAbout },
-                 ["WebSupport"] = new() { HelpLink },
+                 ["Publisher"] = [Publisher],
+                 ["WebInfo"] = [UrlInfoAbout],
+                 ["WebSupport"] = [HelpLink],
              });

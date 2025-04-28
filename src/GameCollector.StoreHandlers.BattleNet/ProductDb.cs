@@ -124,7 +124,7 @@ public partial class BnetUserSettings : IExtensible
     private string? __pbn__selectedSpeechLanguage;
 
     [ProtoMember(8, Name = @"languages")]
-    public IList<BnetLanguageSetting> Languages { get; } = new List<BnetLanguageSetting>();
+    public IList<BnetLanguageSetting> Languages { get; } = [];
 
     [ProtoMember(9, Name = @"gfx_override_tags")]
     [global::System.ComponentModel.DefaultValue("")]
@@ -295,10 +295,10 @@ public partial class BnetBaseProductState : IExtensible
     private string? __pbn__currentVersionStr;
 
     [ProtoMember(8, Name = @"installedBuildConfig")]
-    public IList<BnetBuildConfig> installedBuildConfigs { get; } = new List<BnetBuildConfig>();
+    public IList<BnetBuildConfig> installedBuildConfigs { get; } = [];
 
     [ProtoMember(9, Name = @"backgroundDownloadBuildConfig")]
-    public IList<BnetBuildConfig> backgroundDownloadBuildConfigs { get; } = new List<BnetBuildConfig>();
+    public IList<BnetBuildConfig> backgroundDownloadBuildConfigs { get; } = [];
 
     [ProtoMember(10)]
     [global::System.ComponentModel.DefaultValue("")]
@@ -312,7 +312,7 @@ public partial class BnetBaseProductState : IExtensible
     private string? __pbn__decryptionKey;
 
     [ProtoMember(11)]
-    public IList<string> completedInstallActions { get; } = new List<string>();
+    public IList<string> completedInstallActions { get; } = [];
 
 }
 
@@ -608,7 +608,7 @@ public partial class BnetActiveProcess : IExtensible
     private int? __pbn__Pid;
 
     [ProtoMember(3, Name = @"uri")]
-    public IList<string> Uris { get; } = new List<string>();
+    public IList<string> Uris { get; } = [];
 
 }
 
@@ -651,16 +651,16 @@ public partial class BnetDatabase : IExtensible
         => Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
     [ProtoMember(1, Name = @"productInstall")]
-    public IList<BnetProductInstall> productInstalls { get; } = new List<BnetProductInstall>();
+    public IList<BnetProductInstall> productInstalls { get; } = [];
 
     [ProtoMember(2)]
-    public IList<BnetInstallHandshake> activeInstalls { get; } = new List<BnetInstallHandshake>();
+    public IList<BnetInstallHandshake> activeInstalls { get; } = [];
 
     [ProtoMember(3)]
-    public IList<BnetActiveProcess> activeProcesses { get; } = new List<BnetActiveProcess>();
+    public IList<BnetActiveProcess> activeProcesses { get; } = [];
 
     [ProtoMember(4)]
-    public IList<BnetProductConfig> productConfigs { get; } = new List<BnetProductConfig>();
+    public IList<BnetProductConfig> productConfigs { get; } = [];
 
     [ProtoMember(5)]
     public BnetDownloadSettings? downloadSettings { get; set; }

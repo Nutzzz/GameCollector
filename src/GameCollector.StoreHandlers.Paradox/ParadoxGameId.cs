@@ -16,8 +16,12 @@ public readonly partial struct ParadoxGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class ParadoxGameIdComparer : IEqualityComparer<ParadoxGameId>
+public class ParadoxGameIdComparer(StringComparison stringComparison) : IEqualityComparer<ParadoxGameId>
 {
     private static ParadoxGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class ParadoxGameIdComparer : IEqualityComparer<ParadoxGameId>
     /// </summary>
     public static ParadoxGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public ParadoxGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public ParadoxGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(ParadoxGameId x, ParadoxGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

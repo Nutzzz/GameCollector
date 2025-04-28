@@ -27,8 +27,23 @@ namespace GameCollector.EmuHandlers.MAME;
 /// <summary>
 /// Handler for finding MAME ROMs.
 /// </summary>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="mamePath"></param>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
 [PublicAPI]
-public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
+public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, IRegistry? registry = null) : AHandler<MAMEGame, MAMEGameId>
 {
     /// <summary>
     ///     Number of ROMs to process per batch. ROM files are batched when passing as arguments to MAME both 
@@ -37,36 +52,14 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
     private const int ROMsPerBatch = 500;
 
     private readonly IRegistry? _registry;
-    private readonly IFileSystem _fileSystem;
-    private AbsolutePath _mamePath;
-    private ILogger? _logger;
+    private readonly IFileSystem _fileSystem = fileSystem;
+    private readonly AbsolutePath _mamePath = mamePath;
+    private readonly ILogger? _logger;
 
     private XmlReaderSettings _readerSettings = new();
     private event PropertyChangedEventHandler? _propertyChanged = null;
     //private PropertyChangedEventArgs _propertyChangedArgs = new("");
     private int _progress;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="mamePath"></param>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    public MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, IRegistry? registry = null) //, ILogger? logger = null)
-    {
-        _fileSystem = fileSystem;
-        _mamePath = mamePath;
-        //_logger = logger;
-    }
 
     /// <inheritdoc/>
     public override IEqualityComparer<MAMEGameId>? IdEqualityComparer => MAMEGameIdComparer.Default;
@@ -178,7 +171,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
                     isMature = game.Category.Mature;
                 }
 
-                List<Problem> problems = new();
+                List<Problem> problems = [];
                 if (statusNotMet)
                     problems.Add(Problem.DoesNotMeetRequirements);
                 if (failedToVerify)
@@ -196,7 +189,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
                     Parent: parent,
                     Year: game.Machine.Year,
                     Manufacturer: game.Machine.Manufacturer,
-                    Categories: new List<string>() { gameCategory1 ?? "Unknown", gameCategory2 ?? "", gameCategory3 ?? "" },
+                    Categories: [gameCategory1 ?? "Unknown", gameCategory2 ?? "", gameCategory3 ?? ""],
                     IsMature: isMature,
                     Players: players,
                     DriverStatus: driverStatus,
@@ -244,7 +237,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
         if (availableOnly == true && romFiles.Count == 0)
         {
             _logger?.LogDebug("No ROM files available.");
-            return new();
+            return [];
         }
 
         var verifiedTask = GetVerifiedSets(progressCallback, romFiles, availableOnly, doVerify);
@@ -408,7 +401,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
     /// <param name="callback">callback to invoke</param>
     /// <param name="processed">number of ROM files processed</param>
     /// <param name="romCount">total number of ROM files</param>
-    private int Callback(Action<int> callback, float processed, int romCount)
+    private static int Callback(Action<int> callback, float processed, int romCount)
     {
         var percentage = (int)Math.Round(processed / romCount * 100);
 
@@ -424,15 +417,15 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
     /// </remarks>
     private List<(string name, string path)> GetROMFiles()
     {
-        List<(string name, string path)> roms = new();
+        List<(string name, string path)> roms = [];
 
         foreach (var path in GetROMPaths())
         {
             _logger?.LogDebug("rompath: {path}", path);
-            List<string> romFiles = new();
+            List<string> romFiles = [];
             if (Path.IsPathRooted(path) && _fileSystem.FromUnsanitizedFullPath(path).DirectoryExists())
             {
-                romFiles = Directory.GetFiles(path, "*.zip").ToList();
+                romFiles = [.. Directory.GetFiles(path, "*.zip")];
                 _logger?.LogDebug("{romcount} ROMs found", romFiles.Count);
                 foreach (var romFile in romFiles)
                 {
@@ -470,7 +463,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
         }
 
         _logger?.LogError("Unable to retrieve {key} path", key);
-        return new();
+        return [];
     }
 
     /// <summary>
@@ -518,7 +511,7 @@ public partial class MAMEHandler : AHandler<MAMEGame, MAMEGameId>
     /// </summary>
     /// <param name="key">Configuration key</param>
     /// <param name="line">Entire configuration line to parse</param>
-    /// <returns>Absolute directories extracted from <c>line</c>, or <c>null</c> if no match</returns>
+    /// <returns>Absolute directories extracted from <c>line</c>, or <langword>null</langword> if no match</returns>
     private List<string> ExtractConfigPaths(string key, string line)
     {
         // Extract path string from configuration line

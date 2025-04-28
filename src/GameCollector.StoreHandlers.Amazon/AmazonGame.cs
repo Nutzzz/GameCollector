@@ -68,24 +68,24 @@ public record AmazonGame(AmazonGameId ProductId,
              InstallDate: InstallDate,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["ReleaseDate"] = new() { ReleaseDate is null ? "" : ((DateTime)ReleaseDate).ToString(CultureInfo.InvariantCulture), },
-                 ["Description"] = new() { ProductDescription ?? "", },
-                 ["ImageUrl"] = new() { ProductIconUrl ?? "", },
-                 ["LogoUrl"] = new() { ProductLogoUrl ?? "", },
-                 ["Screenshots"] = string.IsNullOrEmpty(Screenshots) ? new() : GetJsonArray(@Screenshots ?? ""),
-                 ["Videos"] = string.IsNullOrEmpty(Videos) ? new() : GetJsonArray(@Videos ?? ""),
-                 ["WebInfo"] = string.IsNullOrEmpty(WebInfo) ? new() : GetJsonArray(@WebInfo ?? ""),
-                 ["WebSupport"] = string.IsNullOrEmpty(WebSupport) ? new() : GetJsonArray(@WebSupport ?? ""),
-                 ["Developers"] = string.IsNullOrEmpty(Developers) ? new() : GetJsonArray(@Developers ?? ""),
-                 ["Publishers"] = new() { ProductPublisher ?? "", },
-                 ["AgeRating"] = new() { EsrbRating == (EsrbRating)(-1) ? "" : EsrbRating.ToString(), },
-                 ["Players"] = string.IsNullOrEmpty(GameModes) ? new() : GetJsonArray(@GameModes ?? ""),
-                 ["Genres"] = string.IsNullOrEmpty(Genres) ? new() : GetJsonArray(@Genres ?? ""),
+                 ["ReleaseDate"] = [ReleaseDate is null ? "" : ((DateTime)ReleaseDate).ToString(CultureInfo.InvariantCulture),],
+                 ["Description"] = [ProductDescription ?? "",],
+                 ["ImageUrl"] = [ProductIconUrl ?? "",],
+                 ["LogoUrl"] = [ProductLogoUrl ?? "",],
+                 ["Screenshots"] = string.IsNullOrEmpty(Screenshots) ? [] : GetJsonArray(@Screenshots ?? ""),
+                 ["Videos"] = string.IsNullOrEmpty(Videos) ? [] : GetJsonArray(@Videos ?? ""),
+                 ["WebInfo"] = string.IsNullOrEmpty(WebInfo) ? [] : GetJsonArray(@WebInfo ?? ""),
+                 ["WebSupport"] = string.IsNullOrEmpty(WebSupport) ? [] : GetJsonArray(@WebSupport ?? ""),
+                 ["Developers"] = string.IsNullOrEmpty(Developers) ? [] : GetJsonArray(@Developers ?? ""),
+                 ["Publishers"] = [ProductPublisher ?? "",],
+                 ["AgeRating"] = [EsrbRating == (EsrbRating)(-1) ? "" : EsrbRating.ToString(),],
+                 ["Players"] = string.IsNullOrEmpty(GameModes) ? [] : GetJsonArray(@GameModes ?? ""),
+                 ["Genres"] = string.IsNullOrEmpty(Genres) ? [] : GetJsonArray(@Genres ?? ""),
              })
 {
     internal static List<string> GetJsonArray(string json)
     {
-        List<string> list = new();
+        List<string> list = [];
         using var doc = JsonDocument.Parse(json, new() { AllowTrailingCommas = true, });
         foreach (var element in doc.RootElement.EnumerateArray())
         {

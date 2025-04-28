@@ -12,15 +12,10 @@ namespace GameCollector.SQLiteUtils;
 // Based on https://stackoverflow.com/a/57541054
 
 [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-public class SqlColNameAttribute : Attribute
+public class SqlColNameAttribute(string name) : Attribute
 {
-    private string _name = "";
+    private string _name = name;
     public string Name { get => _name; set => _name = value; }
-
-    public SqlColNameAttribute(string name)
-    {
-        _name = name;
-    }
 }
 
 [PublicAPI]
@@ -30,7 +25,7 @@ public static class SQLiteHelpers
     {
         try
         {
-            List<T> list = new();
+            List<T> list = [];
 
             foreach (var row in table.AsEnumerable())
             {

@@ -21,7 +21,7 @@ public partial class CategoryParser
 
     public static string GetVersion(AbsolutePath exePath, string gameName, IFileSystem fileSystem)
     {
-        if (!Versions.Any())
+        if (Versions.Count == 0)
             LoadCatFile(exePath, fileSystem);
 
         return Versions.TryGetValue(gameName, out var value) ? value : "";
@@ -29,7 +29,7 @@ public partial class CategoryParser
 
     internal static Category GetCategory(AbsolutePath exePath, string gameName, IFileSystem fileSystem)
     {
-        if (!Categories.Any())
+        if (Categories.Count == 0)
             LoadCatFile(exePath, fileSystem);
 
         return Categories.TryGetValue(gameName, out var value) ? value : new Category("Unknown", "", "", mature: false);

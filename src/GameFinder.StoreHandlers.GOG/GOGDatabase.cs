@@ -42,7 +42,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
         limitedDetailsId, releaseDate from Details
         */
 
-        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = new();
+        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = [];
         var database = GetDatabaseFile(_fileSystem);
 
         if (!database.FileExists)
@@ -119,7 +119,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 var storeUrl = "";
                 var supportUrl = "";
                 var isHidden = false;
-                List<string> tags = new();
+                List<string> tags = [];
 
                 if (!string.IsNullOrEmpty(game.Links))
                 {

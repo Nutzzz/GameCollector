@@ -18,38 +18,30 @@ namespace GameCollector.EmuHandlers.Dolphin;
 /// <summary>
 /// Handler for finding ROMs for Dolphin.
 /// </summary>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="dolphinPath"></param>
 [PublicAPI]
-public partial class DolphinHandler : AHandler<DolphinGame, DolphinGameId>
+public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, AbsolutePath dolphinPath) : AHandler<DolphinGame, DolphinGameId>
 {
     internal const string DolphinRegKey = @"Software\Dolphin Emulator";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-    private AbsolutePath _dolphinPath;
-    private ILogger? _logger;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="dolphinPath"></param>
-    public DolphinHandler(IRegistry registry, IFileSystem fileSystem, AbsolutePath dolphinPath) //, ILogger? logger = null)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-        _dolphinPath = dolphinPath;
-        //_logger = logger;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
+    private readonly AbsolutePath _dolphinPath = dolphinPath;
+    private readonly ILogger? _logger;
 
     /// <inheritdoc/>
     public override IEqualityComparer<DolphinGameId>? IdEqualityComparer => DolphinGameIdComparer.Default;
@@ -185,7 +177,7 @@ public partial class DolphinHandler : AHandler<DolphinGame, DolphinGameId>
     internal IList<GameList> ParseGameList(AbsolutePath userPath, IList<string> romPaths)
     {
         GameList game = new();
-        List<GameList> gameList = new();
+        List<GameList> gameList = [];
 
         if (userPath == default)
             return gameList;
@@ -337,7 +329,7 @@ public partial class DolphinHandler : AHandler<DolphinGame, DolphinGameId>
     /// </summary>
     private List<AbsolutePath> GetROMFiles(AbsolutePath path, bool recurse)
     {
-        List<AbsolutePath> roms = new();
+        List<AbsolutePath> roms = [];
 
         _logger?.LogDebug("rompath: {path}", path);
         if (path.DirectoryExists())
@@ -355,10 +347,10 @@ public partial class DolphinHandler : AHandler<DolphinGame, DolphinGameId>
     /// <summary>
     /// Retrieves absolute paths to the ROM directories as configured by Dolphin.
     /// </summary>
-    private List<string> GetROMPaths(AbsolutePath userPath, out bool recurse)
+    private static List<string> GetROMPaths(AbsolutePath userPath, out bool recurse)
     {
         recurse = false;
-        List<string> romPaths = new();
+        List<string> romPaths = [];
 
         if (userPath == default)
             return romPaths;

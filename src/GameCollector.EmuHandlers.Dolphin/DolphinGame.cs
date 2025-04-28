@@ -40,8 +40,8 @@ public record DolphinGame(DolphinGameId DolphinGameId,
              Icon: Cover,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["ReleaseDate"] = new() { AppLoaderDate is null ? "" : ((DateTime)AppLoaderDate).ToString(CultureInfo.InvariantCulture), },
-                 ["Publishers"] = new() { Publisher ?? "", },
-                 ["System"] = new() { System == (DolphinSystem)(-1) ? "" : System.ToString() ?? "", },
-                 ["Region"] = new() { Region == (DolphinRegion)(-1) ? "" : Region.ToString() ?? "", },
+                 ["ReleaseDate"] = [AppLoaderDate is null ? "" : ((DateTime)AppLoaderDate).ToString(CultureInfo.InvariantCulture),],
+                 ["Publishers"] = [Publisher ?? "",],
+                 ["System"] = [System == (DolphinSystem)(-1) ? "" : System.ToString() ?? "",],
+                 ["Region"] = [Region == (DolphinRegion)(-1) ? "" : Region.ToString() ?? "",],
              });

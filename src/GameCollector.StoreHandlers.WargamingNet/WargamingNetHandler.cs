@@ -20,13 +20,27 @@ namespace GameCollector.StoreHandlers.WargamingNet;
 /// Uses files:
 ///   %ProgramData%\Wargaming.net\GameCenter\apps\
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class WargamingNetHandler : AHandler<WargamingNetGame, WargamingNetGameId>
+public class WargamingNetHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<WargamingNetGame, WargamingNetGameId>
 {
     internal const string UninstRegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <summary>
     /// The supported metadata version of this handler. You can change the version policy with
@@ -45,26 +59,6 @@ public class WargamingNetHandler : AHandler<WargamingNetGame, WargamingNetGameId
     /// The default behavior is <see cref="WargamingNet.VersionPolicy.Warn"/>.
     /// </summary>
     public VersionPolicy VersionPolicy { get; set; } = VersionPolicy.Warn;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public WargamingNetHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
 
     /// <inheritdoc/>
     public override IEqualityComparer<WargamingNetGameId>? IdEqualityComparer => WargamingNetGameIdComparer.Default;
@@ -101,7 +95,7 @@ public class WargamingNetHandler : AHandler<WargamingNetGame, WargamingNetGameId
         "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code")]
     public override IEnumerable<OneOf<WargamingNetGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<string> appPaths = new();
+        List<string> appPaths = [];
 
         var appData = GetGameCenterPath().Combine("apps");
         if (!appData.DirectoryExists())

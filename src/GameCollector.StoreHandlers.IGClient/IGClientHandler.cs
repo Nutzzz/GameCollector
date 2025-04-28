@@ -22,8 +22,22 @@ namespace GameCollector.StoreHandlers.IGClient;
 ///   %AppData%\IGClient\storage\installed.json
 ///   %AppData%\IGClient\config.json
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
 [PublicAPI]
-public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
+public class IGClientHandler(IFileSystem fileSystem, IRegistry? registry = null) : AHandler<IGClientGame, IGClientGameId>
 {
     internal const string ImgUrl = "https://www.indiegalacdn.com/imgs/devs/";
     internal const string UninstallRegKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
@@ -39,28 +53,8 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
             //TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IRegistry? _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    public IGClientHandler(IFileSystem fileSystem, IRegistry? registry = null)
-    {
-        _fileSystem = fileSystem;
-        _registry = registry;
-    }
+    private readonly IRegistry? _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<IGClientGameId>? IdEqualityComparer => IGClientGameIdComparer.Default;
@@ -93,27 +87,21 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<IGClientGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<IGClientGame, ErrorMessage>> games = new();
+        List<OneOf<IGClientGame, ErrorMessage>> games;
         var installFile = _fileSystem.GetKnownPath(KnownPath.ApplicationDataDirectory)
             .Combine("IGClient")
             .Combine("storage")
             .Combine("installed.json");
         if (!installFile.FileExists)
         {
-            return new OneOf<IGClientGame, ErrorMessage>[]
-            {
-                new ErrorMessage($"The data file {installFile.GetFullPath()} does not exist!"),
-            };
+            return [new ErrorMessage($"The data file {installFile.GetFullPath()} does not exist!"),];
         }
         var configFile = _fileSystem.GetKnownPath(KnownPath.ApplicationDataDirectory)
             .Combine("IGClient")
             .Combine("config.json");
         if (!configFile.FileExists)
         {
-            return new OneOf<IGClientGame, ErrorMessage>[]
-            {
-                new ErrorMessage($"The data file {configFile.GetFullPath()} does not exist!"),
-            };
+            return [new ErrorMessage($"The data file {configFile.GetFullPath()} does not exist!"),];
         }
 
         games = ParseInstallFile(installFile);
@@ -132,7 +120,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
         Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
     private List<OneOf<IGClientGame, ErrorMessage>> ParseInstallFile(AbsolutePath installFile)
     {
-        List<OneOf<IGClientGame, ErrorMessage>> games = new();
+        List<OneOf<IGClientGame, ErrorMessage>> games = [];
 
         try
         {
@@ -161,7 +149,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
                 var name = "";
                 AbsolutePath launch = new();
                 var launchArgs = "";
-                List<string> specs = new();
+                List<string> specs = [];
                 var rating = 0m;
 
                 AbsolutePath path = new();
@@ -205,7 +193,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
                     DevImage: $"{ImgUrl}{target.ItemData.DevId}/products/{id}/prodmain/{target.ItemData.DevImage}",
                     DevCover: $"{ImgUrl}{target.ItemData.DevId}/products/{id}/prodcover/{target.ItemData.DevCover}",
                     SluggedName: slugged,
-                    Specs: target.GameData.Specs ?? new(),
+                    Specs: target.GameData.Specs ?? [],
                     Categories: target.GameData.Categories,
                     Tags: target.GameData.Tags,
                     AvgRating: rating));
@@ -214,7 +202,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
         }
         catch (Exception e)
         {
-            return new() { new ErrorMessage($"Exception while deserializing file {installFile.GetFullPath()}\n{e.Message}\n{e.InnerException}") };
+            return [new ErrorMessage(e, $"Exception while deserializing file {installFile.GetFullPath()}")];
         }
     }
 
@@ -224,19 +212,19 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
         Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
     private List<OneOf<IGClientGame, ErrorMessage>> ParseConfigFile(AbsolutePath configFile, List<OneOf<IGClientGame, ErrorMessage>> games)
     {
-        List<OneOf<IGClientGame, ErrorMessage>> ownedGames = new();
+        List<OneOf<IGClientGame, ErrorMessage>> ownedGames = [];
         try
         {
             using var streamCfg = configFile.Read();
             var allGames = JsonSerializer.Deserialize<Dictionary<string, ConfigFile>>(streamCfg, JsonSerializerOptions);
             if (allGames is null ||
                 allGames.Count == 0 ||
-                !allGames.ContainsKey("gala_data"))
+                !allGames.TryGetValue("gala_data", out var config))
             {
                 ownedGames.Add(new ErrorMessage($"Unable to deserialize data file {configFile.GetFullPath()}"));
                 return ownedGames;
             }
-            var config = allGames["gala_data"];
+
             if (config.Data is null ||
                 config.Data.ShowcaseContent is null ||
                 config.Data.ShowcaseContent.Content is null ||
@@ -246,7 +234,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
                 return ownedGames;
             }
             var c = 0;
-            var collection = config.Data.ShowcaseContent.Content.UserCollection ?? new();
+            var collection = config.Data.ShowcaseContent.Content.UserCollection ?? [];
             foreach (var game in collection)
             {
                 c++;
@@ -273,9 +261,9 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
                 var slugged = "";
                 var description = "";
                 var descriptionLong = "";
-                List<string> specs = new();
-                List<string> genres = new();
-                List<string> tags = new();
+                List<string> specs = [];
+                List<string> genres = [];
+                List<string> tags = [];
                 var rating = 0m;
 
                 slugged = game.ProdSluggedName ?? "";
@@ -287,9 +275,9 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
                 {
                     description = gameData.DescriptionShort ?? "";
                     descriptionLong = gameData.DescriptionLong ?? "";
-                    specs = gameData.Specs ?? new();
-                    genres = gameData.Categories ?? new();
-                    tags = gameData.Tags ?? new();
+                    specs = gameData.Specs ?? [];
+                    genres = gameData.Categories ?? [];
+                    tags = gameData.Tags ?? [];
                     if (gameData.Rating is not null)
                         rating = gameData.Rating.AvgRating ?? 0m;
                 }
@@ -313,7 +301,7 @@ public class IGClientHandler : AHandler<IGClientGame, IGClientGameId>
         }
         catch (Exception e)
         {
-            ownedGames.Add(new ErrorMessage($"Exception while deserializing file {configFile.GetFullPath()}\n{e.Message}\n{e.InnerException}"));
+            ownedGames.Add(new ErrorMessage(e, $"Exception while deserializing file {configFile.GetFullPath()}"));
         }
         return ownedGames;
     }

@@ -16,8 +16,12 @@ public readonly partial struct RiotGameId : IAugmentWith<DefaultEqualityComparer
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class RiotGameIdComparer : IEqualityComparer<RiotGameId>
+public class RiotGameIdComparer(StringComparison stringComparison) : IEqualityComparer<RiotGameId>
 {
     private static RiotGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class RiotGameIdComparer : IEqualityComparer<RiotGameId>
     /// </summary>
     public static RiotGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public RiotGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public RiotGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(RiotGameId x, RiotGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

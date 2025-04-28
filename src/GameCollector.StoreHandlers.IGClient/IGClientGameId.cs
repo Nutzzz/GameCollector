@@ -16,8 +16,12 @@ public readonly partial struct IGClientGameId : IAugmentWith<DefaultEqualityComp
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class IGClientGameIdComparer : IEqualityComparer<IGClientGameId>
+public class IGClientGameIdComparer(StringComparison stringComparison) : IEqualityComparer<IGClientGameId>
 {
     private static IGClientGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class IGClientGameIdComparer : IEqualityComparer<IGClientGameId>
     /// </summary>
     public static IGClientGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public IGClientGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public IGClientGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(IGClientGameId x, IGClientGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

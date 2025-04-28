@@ -46,7 +46,7 @@ public record BigFishGame(BigFishGameId ProductId,
              Problems: IsExpired ? new List<Problem>() { Problem.ExpiredTrial } : null,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["ImageUrl"] = new() { ImageUrl ?? "", },
+                 ["ImageUrl"] = [ImageUrl ?? "",],
              })
 {
     public static string GetImageUrl(string id)

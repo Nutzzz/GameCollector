@@ -21,8 +21,22 @@ namespace GameCollector.StoreHandlers.GameJolt;
 ///   %AppDataLocal%\game-jolt-client\User Data\Default\games.wttf
 ///   %AppDataLocal%\game-jolt-client\User Data\Default\packages.wttf
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
 [PublicAPI]
-public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
+public class GameJoltHandler(IFileSystem fileSystem, IRegistry? registry = null) : AHandler<GameJoltGame, GameJoltGameId>
 {
     internal const string UninstallRegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
 
@@ -36,8 +50,8 @@ public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
             TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IRegistry? _registry;
-    private readonly IFileSystem _fileSystem;
+    private readonly IRegistry? _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <summary>
     /// The supported wttf version of this handler. You can change the version policy with
@@ -57,26 +71,6 @@ public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
     /// The default behavior is <see cref="GameJolt.VersionPolicy.Warn"/>.
     /// </summary>
     public VersionPolicy VersionPolicy { get; set; } = VersionPolicy.Warn;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    public GameJoltHandler(IFileSystem fileSystem, IRegistry? registry = null)
-    {
-        _fileSystem = fileSystem;
-        _registry = registry;
-    }
 
     /// <inheritdoc/>
     public override Func<GameJoltGame, GameJoltGameId> IdSelector => game => game.Id;
@@ -107,7 +101,7 @@ public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
         "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code")]
     public override IEnumerable<OneOf<GameJoltGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<GameJoltGame, ErrorMessage>> games = new();
+        List<OneOf<GameJoltGame, ErrorMessage>> games = [];
         var filePath = _fileSystem.GetKnownPath(KnownPath.LocalApplicationDataDirectory)
             .Combine("game-jolt-client")
             .Combine("User Data")
@@ -161,7 +155,7 @@ public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
                 if (isVersionError) return games;
             }
 
-            Dictionary<ulong, (string title, string dev, string imgUrl, string wideUrl)> gamesObjs = new();
+            Dictionary<ulong, (string title, string dev, string imgUrl, string wideUrl)> gamesObjs = [];
             foreach (var obj in gameFile.Objects.EnumerateObject())
             {
                 var game = JsonSerializer.Deserialize<Game>(obj.Value, JsonSerializerOptions);
@@ -239,14 +233,15 @@ public class GameJoltHandler : AHandler<GameJoltGame, GameJoltGameId>
                         }
                     }
 
+                    var objExists = gamesObjs.TryGetValue(id, out var objs);
                     games.Add(new GameJoltGame(
                         Id: GameJoltGameId.From(id),
-                        Title: gamesObjs.ContainsKey(id) ? gamesObjs[id].title : exePath.GetFileNameWithoutExtension(),
+                        Title: objExists ? gamesObjs[id].title : exePath.GetFileNameWithoutExtension(),
                         InstallDir: instDir,
                         ExecutablePath: exePath,
-                        Developer: gamesObjs.ContainsKey(id) ? gamesObjs[id].dev : "",
-                        ImageUrl: gamesObjs.ContainsKey(id) ? gamesObjs[id].imgUrl : "",
-                        HeaderUrl: gamesObjs.ContainsKey(id) ? gamesObjs[id].wideUrl : "",
+                        Developer: objExists ? gamesObjs[id].dev : "",
+                        ImageUrl: objExists ? gamesObjs[id].imgUrl : "",
+                        HeaderUrl: objExists ? gamesObjs[id].wideUrl : "",
                         PackageId: package.Id ?? 0));
                 }
             }

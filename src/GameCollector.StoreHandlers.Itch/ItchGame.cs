@@ -42,6 +42,6 @@ public record ItchGame(ItchGameId Id,
              IsInstalled: IsInstalled,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { ShortText ?? "", },
-                 ["Genres"] = new() { Classification ?? "", },
+                 ["Description"] = [ShortText ?? "",],
+                 ["Genres"] = [Classification ?? "",],
              });

@@ -17,7 +17,7 @@ namespace GameCollector.EmuHandlers.MAME;
 public class MAMERunner
 {
     private static readonly ILogger logger = new NLogLoggerProvider().CreateLogger("MAME");
-    private readonly List<Process> _processes = new();
+    private readonly List<Process> _processes = [];
 
     /// <summary>
     ///     Kills a MAME process.
@@ -66,7 +66,7 @@ public class MAMERunner
     /// <param name="arguments">arguments to pass to MAME</param>
     public static Process Run(IFileSystem fileSystem, AbsolutePath exePath, params string?[] arguments)
     {
-        //logger.LogDebug("Invoking MAME with arguments: {arguments}", string.Join(" ", arguments));
+        //logger.LogDebug("Invoking MAME with arguments: {arguments}", string.Join(' ', arguments));
 
         if (!fileSystem.FileExists(exePath))
         {
@@ -77,7 +77,7 @@ public class MAMERunner
         var workingDir = exePath.Directory;
         var psi = new ProcessStartInfo(exePath.GetFullPath())
         {
-            Arguments = string.Join(" ", arguments),
+            Arguments = string.Join(' ', arguments),
             WorkingDirectory = workingDir,
             RedirectStandardOutput = true,
             UseShellExecute = false,
@@ -177,33 +177,33 @@ public class PlatformInvokeUser32
     public const int SW_MINIMIZE = 6;
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+    internal static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
 
     [DllImport("user32.dll")]
-    public static extern void SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
+    internal static extern void SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
 
     [DllImport("user32.dll", EntryPoint = "GetDesktopWindow")]
-    public static extern IntPtr GetDesktopWindow();
+    internal static extern IntPtr GetDesktopWindow();
 
     [DllImport("user32.dll", EntryPoint = "GetDC")]
-    public static extern IntPtr GetDC(IntPtr ptr);
+    internal static extern IntPtr GetDC(IntPtr ptr);
 
     [DllImport("user32.dll", EntryPoint = "GetSystemMetrics")]
-    public static extern int GetSystemMetrics(int abc);
+    internal static extern int GetSystemMetrics(int abc);
 
     [DllImport("user32.dll", EntryPoint = "GetWindowDC")]
-    public static extern IntPtr GetWindowDC(int ptr);
+    internal static extern IntPtr GetWindowDC(int ptr);
 
     [DllImport("user32.dll", EntryPoint = "ReleaseDC")]
-    public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
+    internal static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+    internal static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT
@@ -215,5 +215,5 @@ public class PlatformInvokeUser32
     }
 
     [DllImport("user32.dll")]
-    public static extern bool SetProcessDPIAware();
+    internal static extern bool SetProcessDPIAware();
 }

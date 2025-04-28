@@ -39,7 +39,7 @@ public record OculusGame(OculusGameId HashKey,
              Problems: IsExpired ? new List<Problem>() { Problem.ExpiredTrial } : null,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { Description ?? "", },
-                 ["Genres"] = Genres is null ? new List<string>() : Genres.ToList<string>(),
-                 ["CanonicalName"] = new() { CanonicalName ?? "", },
+                 ["Description"] = [Description ?? "",],
+                 ["Genres"] = Genres is null ? [] : [.. Genres],
+                 ["CanonicalName"] = [CanonicalName ?? "",],
              });

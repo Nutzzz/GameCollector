@@ -50,11 +50,11 @@ public record EADesktopGame(EADesktopGameId EADesktopGameId,
              BaseGame: IsDLC ? (!IsDLC).ToString() : null,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Publishers"] = new() { Publisher ?? "", },
-                 ["WebInfo"] = new() { WebInfo ?? "" },
-                 ["WebSupport"] = new() { WebSupport ?? "", },
-                 ["BaseSlug"] = new() { BaseSlug },
-                 ["ContentIDs"] = ContentIDs?.ToList<string>() ?? new(),
+                 ["Publishers"] = [Publisher ?? "",],
+                 ["WebInfo"] = [WebInfo ?? ""],
+                 ["WebSupport"] = [WebSupport ?? "",],
+                 ["BaseSlug"] = [BaseSlug],
+                 ["ContentIDs"] = ContentIDs?.ToList() ?? [],
              })
 {
     /// <summary>

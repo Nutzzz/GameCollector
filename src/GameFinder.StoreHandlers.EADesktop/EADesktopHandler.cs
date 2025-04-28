@@ -249,7 +249,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
     internal static string ParseInstallerDataFile(IFileSystem fileSystem, string baseInstallPath, out IList<string> contentIds)
     {
         var title = "";
-        contentIds = new List<string>();
+        contentIds = [];
 
         var dataFile = fileSystem.FromUnsanitizedFullPath(Path.Combine(baseInstallPath, "__Installer", "installerdata.xml"));
         if (dataFile.FileExists)
@@ -363,6 +363,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
         else if (Path.IsPathRooted(baseInstallPath))
             isInstalled = true;
 
+        var sInstFile = "";
         if (installCheck.StartsWith('['))
         {
             var j = installCheck.IndexOf(']', StringComparison.Ordinal);
@@ -382,7 +383,8 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
                 pub = Path.GetFileName(sInstRegKey[..l].TrimEnd('/', '\\'));
             }
 
-            var sInstFile = installCheck[(j + 1)..];
+            // TODO: Do I need this?
+            sInstFile = installCheck[(j + 1)..];
         }
 
         if (isInstalled)

@@ -25,33 +25,27 @@ namespace GameCollector.StoreHandlers.Amazon;
 /// and Registry key:
 ///   HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
+public class AmazonHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<AmazonGame, AmazonGameId>
 {
     internal const string UninstallRegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public AmazonHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<AmazonGameId>? IdEqualityComparer => AmazonGameIdComparer.Default;
@@ -182,7 +176,7 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
 
     private Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> ParseInstalled(AbsolutePath db, bool installedOnly = false)
     {
-        Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> installDict = new();
+        Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> installDict = [];
 
         var installs = SQLiteHelpers.GetDataTable(db, "SELECT * FROM DbSet;").ToList<InstallInfo>();
         if (installs is not null)
@@ -256,9 +250,9 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
         return installDict;
     }
 
-    private Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> ParseOwned(AbsolutePath db, bool installedOnly = false)
+    private static Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> ParseOwned(AbsolutePath db, bool installedOnly = false)
     {
-        Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> ownedDict = new();
+        Dictionary<AmazonGameId, OneOf<AmazonGame, ErrorMessage>> ownedDict = [];
 
         var products = SQLiteHelpers.GetDataTable(db, "SELECT * FROM DbSet;").ToList<ProductInfo>();
         if (products is not null)
@@ -394,7 +388,7 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
     {
         if (_registry is null)
         {
-            return new OneOf<AmazonGame, ErrorMessage>[] { new ErrorMessage("Unable to open registry"), };
+            return [new ErrorMessage("Unable to open registry"),];
         }
 
         try
@@ -404,16 +398,14 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
             using var unKey = currentUser.OpenSubKey(UninstallRegKey);
             if (unKey is null)
             {
-                return new OneOf<AmazonGame, ErrorMessage>[] { new ErrorMessage($"Unable to open HKEY_CURRENT_USER\\{UninstallRegKey}"), };
+                return [new ErrorMessage($"Unable to open HKEY_CURRENT_USER\\{UninstallRegKey}"),];
             }
 
             var subKeyNames = unKey.GetSubKeyNames().Where(
                 keyName => keyName[(keyName.LastIndexOf('\\') + 1)..].StartsWith("AmazonGames/", StringComparison.OrdinalIgnoreCase)).ToArray();
             if (subKeyNames.Length == 0)
             {
-                return new OneOf<AmazonGame, ErrorMessage>[] {
-                    new ErrorMessage($"Registry key {unKey.GetName()} has no sub-keys beginning with \"AmazonGames/\""),
-                };
+                return [new ErrorMessage($"Registry key {unKey.GetName()} has no sub-keys beginning with \"AmazonGames/\""),];
             }
 
             return subKeyNames
@@ -422,7 +414,7 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
         }
         catch (Exception e)
         {
-            return new OneOf<AmazonGame, ErrorMessage>[] { new ErrorMessage(e, "Exception looking for Amazon games in registry") };
+            return [new ErrorMessage(e, "Exception looking for Amazon games in registry")];
         }
     }
 
@@ -442,22 +434,20 @@ public class AmazonHandler : AHandler<AmazonGame, AmazonGameId>
             {
                 return new ErrorMessage($"Unable to open HKEY_CURRENT_USER\\{UninstallRegKey}");
             }
-            else
-            {
-                var subKeyNames = unKey.GetSubKeyNames().Where(
-                    keyName => keyName[(keyName.LastIndexOf('\\') + 1)..].StartsWith("AmazonGames/", StringComparison.OrdinalIgnoreCase)).ToArray();
-                if (subKeyNames.Length == 0)
-                {
-                    return new ErrorMessage($"Registry key {unKey.GetName()} has no sub-keys beginning with \"AmazonGames/\"");
-                }
 
-                foreach (var subKeyName in subKeyNames)
+            var subKeyNames = unKey.GetSubKeyNames().Where(
+                keyName => keyName[(keyName.LastIndexOf('\\') + 1)..].StartsWith("AmazonGames/", StringComparison.OrdinalIgnoreCase)).ToArray();
+            if (subKeyNames.Length == 0)
+            {
+                return new ErrorMessage($"Registry key {unKey.GetName()} has no sub-keys beginning with \"AmazonGames/\"");
+            }
+
+            foreach (var subKeyName in subKeyNames)
+            {
+                var game = ParseSubKey(unKey, subKeyName, fileSystem, id);
+                if (game.IsGame())
                 {
-                    var game = ParseSubKey(unKey, subKeyName, fileSystem, id);
-                    if (game.IsGame())
-                    {
-                        return game;
-                    }
+                    return game;
                 }
             }
         }

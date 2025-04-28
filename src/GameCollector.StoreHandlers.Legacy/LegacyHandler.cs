@@ -24,8 +24,22 @@ namespace GameCollector.StoreHandlers.Legacy;
 /// and Registry key:
 ///   HKCU\Software\Legacy Games
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
+public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<LegacyGame, LegacyGameId>
 {
     internal const string LegacyRegKey = @"Software\Legacy Games";
     internal const string UninstallRegKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
@@ -40,28 +54,8 @@ public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
             TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public LegacyHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<LegacyGameId>? IdEqualityComparer => LegacyGameIdComparer.Default;
@@ -92,7 +86,7 @@ public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<LegacyGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<LegacyGame, ErrorMessage>> games = new();
+        List<OneOf<LegacyGame, ErrorMessage>> games = [];
         var regDict = ParseRegistry();
         var jsonDict = ParseJsonFile(regDict.Keys);
         var instDirs = new List<AbsolutePath>();
@@ -158,12 +152,12 @@ public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
         Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
     private Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>> ParseJsonFile(Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>>.KeyCollection searchIds, bool unowned = false)
     {
-        Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>> gameDict = new();
+        Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>> gameDict = [];
 
         var jsonFile = GetLegacyJsonFile();
         if (!jsonFile.FileExists)
             return gameDict;
-        List<AbsolutePath> libraryPaths = new();
+        List<AbsolutePath> libraryPaths = [];
 
         try
         {
@@ -274,7 +268,7 @@ public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
 
     private List<OneOf<LegacyGame, ErrorMessage>> GetInstalledGames(List<AbsolutePath> libPaths)
     {
-        List<OneOf<LegacyGame, ErrorMessage>> games = new();
+        List<OneOf<LegacyGame, ErrorMessage>> games = [];
 
         foreach (var lib in libPaths)
         {
@@ -389,7 +383,7 @@ public class LegacyHandler : AHandler<LegacyGame, LegacyGameId>
             return new() { [LegacyGameId.From("")] = new ErrorMessage("Unable to open registry"), };
         }
 
-        Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>> gameDict = new();
+        Dictionary<LegacyGameId, OneOf<LegacyGame, ErrorMessage>> gameDict = [];
 
         try
         {

@@ -25,8 +25,22 @@ namespace GameCollector.StoreHandlers.Riot;
 /// and yaml files:
 ///   %ProgramData%\Riot Games\Metadata\*\*settings.yaml
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
 [PublicAPI]
-public class RiotHandler : AHandler<RiotGame, RiotGameId>
+public class RiotHandler(IFileSystem fileSystem, IRegistry? registry = null) : AHandler<RiotGame, RiotGameId>
 {
     private readonly JsonSerializerOptions JsonSerializerOptions =
         new()
@@ -38,28 +52,8 @@ public class RiotHandler : AHandler<RiotGame, RiotGameId>
             TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IRegistry? _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    public RiotHandler(IFileSystem fileSystem, IRegistry? registry = null)
-    {
-        _fileSystem = fileSystem;
-        _registry = registry;
-    }
+    private readonly IRegistry? _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override IEqualityComparer<RiotGameId>? IdEqualityComparer => RiotGameIdComparer.Default;

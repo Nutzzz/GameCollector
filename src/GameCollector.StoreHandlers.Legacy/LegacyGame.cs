@@ -48,8 +48,8 @@ public record LegacyGame(LegacyGameId InstallerUuid,
              Problems: NotFoundInData ? new List<Problem> { Problem.NotFoundInData } : null,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { Description ?? "", },
-                 ["Publishers"] = new() { Publisher ?? "", },
-                 ["Genres"] = new() { Genre == Legacy.Genre.Unknown ? "" : Genre.ToString() ?? "", },
-                 ["ImageUrl"] = new() { CoverArtUrl ?? "", },
+                 ["Description"] = [Description ?? "",],
+                 ["Publishers"] = [Publisher ?? "",],
+                 ["Genres"] = [Genre == Legacy.Genre.Unknown ? "" : Genre.ToString() ?? "",],
+                 ["ImageUrl"] = [CoverArtUrl ?? "",],
              });

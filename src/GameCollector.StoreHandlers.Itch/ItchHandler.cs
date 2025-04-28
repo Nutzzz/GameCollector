@@ -21,8 +21,22 @@ namespace GameCollector.StoreHandlers.Itch;
 /// Uses SQLite database:
 ///   %AppData%\itch\db\butler.db
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
 [PublicAPI]
-public class ItchHandler : AHandler<ItchGame, ItchGameId>
+public class ItchHandler(IFileSystem fileSystem, IRegistry? registry = null) : AHandler<ItchGame, ItchGameId>
 {
     internal const string ItchLaunchUrl = "itch://games/";  // itch://games/<gameid>
     internal const string ItchStartUrl = "itch://caves/";   // itch://caves/<caveid>/launch
@@ -39,28 +53,8 @@ public class ItchHandler : AHandler<ItchGame, ItchGameId>
             TypeInfoResolver = SourceGenerationContext.Default,
         };
 
-    private readonly IRegistry? _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    public ItchHandler(IFileSystem fileSystem, IRegistry? registry = null)
-    {
-        _fileSystem = fileSystem;
-        _registry = registry;
-    }
+    private readonly IRegistry? _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override Func<ItchGame, ItchGameId> IdSelector => game => game.Id;
@@ -147,7 +141,7 @@ public class ItchHandler : AHandler<ItchGame, ItchGameId>
 
             if (caves is not null)
             {
-                var result = ParseCavesForId(caves.ToList(), id, name);
+                var result = ParseCavesForId([.. caves], id, name);
                 if (result.IsError())
                 {
                     if (settings?.InstalledOnly == true)
@@ -229,7 +223,7 @@ public class ItchHandler : AHandler<ItchGame, ItchGameId>
         }
         catch (Exception e)
         {
-            return new ErrorMessage(e, $"Exception while parsing table \"caves\" for \"{name}\" [{id}]\n{e.Message}\n{e.InnerException}");
+            return new ErrorMessage(e, $"Exception while parsing table \"caves\" for \"{name}\" [{id}]");
         }
 
         return new ErrorMessage($"\"{name}\" [{id}] not found in table \"caves\"");

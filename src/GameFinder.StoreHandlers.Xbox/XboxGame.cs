@@ -29,6 +29,6 @@ public record XboxGame(XboxGameId Id,
              Icon: Logo,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { Description ?? "" },
-                 ["Publishers"] = new() { Publisher ?? "" },
+                 ["Description"] = [Description ?? ""],
+                 ["Publishers"] = [Publisher ?? ""],
              });

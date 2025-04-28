@@ -23,14 +23,28 @@ namespace GameCollector.StoreHandlers.Ubisoft;
 /// And yaml file:
 ///   .\cache\configuration\configurations
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
+public class UbisoftHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<UbisoftGame, UbisoftGameId>
 {
     internal const string ConnectRegKey = @"SOFTWARE\Ubisoft\Launcher";
     internal const string UninstallRegKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <summary>
     /// The supported schema version of this handler. You can change the schema policy with
@@ -43,26 +57,6 @@ public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
     /// The default behavior is <see cref="Ubisoft.SchemaPolicy.Warn"/>.
     /// </summary>
     public SchemaPolicy SchemaPolicy { get; set; } = SchemaPolicy.Warn;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public UbisoftHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
 
     /// <inheritdoc/>
     public override IEqualityComparer<UbisoftGameId>? IdEqualityComparer => UbisoftGameIdComparer.Default;
@@ -108,7 +102,7 @@ public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
             yield break;
         }
 
-        List<string> ubiIds = new();
+        List<string> ubiIds = [];
         foreach (var subKeyName in subKeyNames)
         {
             yield return ParseSubKey(unKey, subKeyName, _fileSystem, out var iconId);
@@ -134,7 +128,7 @@ public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
             // Each entry is expected to start with "version:" (schema)
             using var stream = _fileSystem.ReadFile(configFile);
             using var reader = new StreamReader(stream, Encoding.UTF8);
-            List<string> input = new();
+            List<string> input = [];
             do
             {
                 var parse = false;
@@ -186,7 +180,7 @@ public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
                 {
                     yield return ParseConfigFile(string.Join('\n', input), launcherPath, _fileSystem, _registry, ubiIds, settings?.BaseOnly);
                 }
-                input = new();
+                input = [];
                 if (line is not null &&
                     line.Contains("version: ", StringComparison.Ordinal) &&
                     !line.Contains(" version:", StringComparison.Ordinal))
@@ -300,8 +294,8 @@ public class UbisoftHandler : AHandler<UbisoftGame, UbisoftGameId>
 
                 if (string.IsNullOrEmpty(name))
                     return new ErrorMessage("Entry does not have a name or ID!");
-                else
-                    id = new string(name.Where(char.IsLetterOrDigit).ToArray());
+
+                id = new string(name.Where(char.IsLetterOrDigit).ToArray());
             }
             else
             {

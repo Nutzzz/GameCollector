@@ -96,7 +96,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<EGSGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<EGSGame, ErrorMessage>> allGames = new();
+        List<OneOf<EGSGame, ErrorMessage>> allGames = [];
         var manifestDir = GetManifestDir();
         if (!_fileSystem.DirectoryExists(manifestDir))
         {
@@ -114,7 +114,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             return allGames;
         }
 
-        Dictionary<EGSGameId, OneOf<EGSGame, ErrorMessage>> installedDict = new();
+        Dictionary<EGSGameId, OneOf<EGSGame, ErrorMessage>> installedDict = [];
         foreach (var itemFile in itemFiles)
         {
             var game = DeserializeGame(itemFile, FormatPolicy, settings?.BaseOnly);

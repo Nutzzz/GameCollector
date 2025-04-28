@@ -34,8 +34,8 @@ public record GameJoltGame(GameJoltGameId Id,
              Icon: ExecutablePath,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Developers"] = new() { Developer ?? "", },
-                 ["ImageUrl"] = new() { ImageUrl ?? "", },
-                 ["ImageWideUrl"] = new() { HeaderUrl ?? "", },
-                 ["PackageId"] = new() { PackageId.ToString() ?? "", },
+                 ["Developers"] = [Developer ?? "",],
+                 ["ImageUrl"] = [ImageUrl ?? "",],
+                 ["ImageWideUrl"] = [HeaderUrl ?? "",],
+                 ["PackageId"] = [PackageId.ToString() ?? "",],
              });

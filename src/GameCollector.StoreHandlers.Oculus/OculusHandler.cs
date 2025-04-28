@@ -23,33 +23,27 @@ namespace GameCollector.StoreHandlers.Oculus;
 /// Uses SQLite database:
 ///   %AppData%\Oculus\sessions\_oaf\data.sqlite
 /// </remarks>
+/// <remarks>
+/// Constructor.
+/// </remarks>
+/// <param name="registry">
+/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
+/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
+/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
+/// of the interface.
+/// </param>
+/// <param name="fileSystem">
+/// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
+/// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
+/// a custom implementation or just a mock of the interface.
+/// </param>
 [PublicAPI]
-public class OculusHandler : AHandler<OculusGame, OculusGameId>
+public class OculusHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<OculusGame, OculusGameId>
 {
     internal const string OculusRegKey = @"SOFTWARE\Oculus VR, LLC\Oculus";
 
-    private readonly IRegistry _registry;
-    private readonly IFileSystem _fileSystem;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="registry">
-    /// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-    /// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <c>null</c>.
-    /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-    /// of the interface.
-    /// </param>
-    /// <param name="fileSystem">
-    /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use
-    /// <see cref="FileSystem.Shared"/>. For tests either use <see cref="InMemoryFileSystem"/>,
-    /// a custom implementation or just a mock of the interface.
-    /// </param>
-    public OculusHandler(IRegistry registry, IFileSystem fileSystem)
-    {
-        _registry = registry;
-        _fileSystem = fileSystem;
-    }
+    private readonly IRegistry _registry = registry;
+    private readonly IFileSystem _fileSystem = fileSystem;
 
     /// <inheritdoc/>
     public override Func<OculusGame, OculusGameId> IdSelector => game => game.HashKey;
@@ -81,7 +75,7 @@ public class OculusHandler : AHandler<OculusGame, OculusGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<OculusGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<OculusGame, ErrorMessage>> games = new();
+        List<OneOf<OculusGame, ErrorMessage>> games = [];
 
         var restartSvc = false;
 
@@ -89,7 +83,7 @@ public class OculusHandler : AHandler<OculusGame, OculusGameId>
         if (OperatingSystem.IsWindows())
             restartSvc = Utils.ServiceStop("OVRService", TimeSpan.FromSeconds(5));
 
-        List<string> libPaths = new();
+        List<string> libPaths = [];
         Dictionary<string, string> exePaths = new(StringComparer.OrdinalIgnoreCase);
 
         var database = _fileSystem.GetKnownPath(KnownPath.ApplicationDataDirectory)
@@ -99,7 +93,7 @@ public class OculusHandler : AHandler<OculusGame, OculusGameId>
             .Combine("data.sqlite");
 
         if (!database.FileExists)
-            return new OneOf<OculusGame, ErrorMessage>[] { new ErrorMessage("Oclus database not found") };
+            return [new ErrorMessage("Oclus database not found")];
 
         var currentUser = _registry.OpenBaseKey(RegistryHive.CurrentUser);
         using (var libKey = currentUser.OpenSubKey(@"Software\Oculus VR, LLC\Oculus\Libraries"))
@@ -117,11 +111,11 @@ public class OculusHandler : AHandler<OculusGame, OculusGameId>
 
         foreach (var lib in libPaths)
         {
-            List<string> libFiles = new();
+            List<string> libFiles = [];
             try
             {
                 var manifestPath = Path.Combine(lib, "Manifests");
-                libFiles = Directory.GetFiles(manifestPath, "*.json.mini", SearchOption.TopDirectoryOnly).ToList();
+                libFiles = [.. Directory.GetFiles(manifestPath, "*.json.mini", SearchOption.TopDirectoryOnly)];
             }
             catch (Exception e)
             {
@@ -187,7 +181,7 @@ public class OculusHandler : AHandler<OculusGame, OculusGameId>
             {
                 var displayName = "";
                 var strDescription = "";
-                List<string> genres = new();
+                List<string> genres = [];
                 var strLaunch = "";
 
                 var url = "";

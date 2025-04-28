@@ -16,8 +16,12 @@ public readonly partial struct UbisoftGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
+/// <summary>
+/// Constructor.
+/// </summary>
+/// <param name="stringComparison"></param>
 [PublicAPI]
-public class UbisoftGameIdComparer : IEqualityComparer<UbisoftGameId>
+public class UbisoftGameIdComparer(StringComparison stringComparison) : IEqualityComparer<UbisoftGameId>
 {
     private static UbisoftGameIdComparer? _default;
 
@@ -26,21 +30,12 @@ public class UbisoftGameIdComparer : IEqualityComparer<UbisoftGameId>
     /// </summary>
     public static UbisoftGameIdComparer Default => _default ??= new();
 
-    private readonly StringComparison _stringComparison;
+    private readonly StringComparison _stringComparison = stringComparison;
 
     /// <summary>
     /// Default constructor that uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </summary>
     public UbisoftGameIdComparer() : this(StringComparison.OrdinalIgnoreCase) { }
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="stringComparison"></param>
-    public UbisoftGameIdComparer(StringComparison stringComparison)
-    {
-        _stringComparison = stringComparison;
-    }
 
     /// <inheritdoc/>
     public bool Equals(UbisoftGameId x, UbisoftGameId y) => string.Equals(x.Value, y.Value, _stringComparison);

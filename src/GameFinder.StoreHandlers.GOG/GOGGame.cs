@@ -76,11 +76,11 @@ public record GOGGame(GOGGameId Id,
              BaseGame: ParentId.ToString(),
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["ReleaseDate"] = new() { ReleaseDate is null ? "" : ((DateTime)ReleaseDate).ToString(CultureInfo.InvariantCulture) },
-                 ["WebInfo"] = new() { StoreUrl },
-                 ["WebSupport"] = new() { SupportUrl },
-                 ["ImageUrl"] = new() { BoxArtUrl },
-                 ["ImageWideUrl"] = new() { LogoUrl },
-                 ["IconUrl"] = new() { IconUrl },
-                 ["BuildId"] = new() { BuildId },
+                 ["ReleaseDate"] = [ReleaseDate is null ? "" : ((DateTime)ReleaseDate).ToString(CultureInfo.InvariantCulture)],
+                 ["WebInfo"] = [StoreUrl],
+                 ["WebSupport"] = [SupportUrl],
+                 ["ImageUrl"] = [BoxArtUrl],
+                 ["ImageWideUrl"] = [LogoUrl],
+                 ["IconUrl"] = [IconUrl],
+                 ["BuildId"] = [BuildId],
              });

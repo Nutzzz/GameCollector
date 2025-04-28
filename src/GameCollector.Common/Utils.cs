@@ -179,15 +179,12 @@ public static class Utils
                     var good = false;
                     var filename = exes[i].FileName;
 
-                    List<string> badNames = new()
-                    {
+                    List<string> badNames =
+                    [
                         "unins", "install", "patch", "redist", "prereq", "dotnet", "setup", "config", "w9xpopen", "edit", "help",
                         "python", "server", "service", "cleanup", "anticheat", "touchup", "error", "crash", "report", "handler",
-                    };
-                    List<string> goodNames = new()
-                    {
-                        //"launch", "scummvm",
-                    };
+                    ];
+                    List<string> goodNames = [];    // ["launch", "scummvm",]
 
                     foreach (var badName in badNames)
                     {

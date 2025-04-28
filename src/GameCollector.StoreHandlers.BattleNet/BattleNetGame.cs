@@ -37,5 +37,5 @@ public record BattleNetGame(BattleNetGameId ProductId,
              LastRunDate: LastPlayed,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["Description"] = new() { AppDescription ?? "", },
+                 ["Description"] = [AppDescription ?? "",],
              });

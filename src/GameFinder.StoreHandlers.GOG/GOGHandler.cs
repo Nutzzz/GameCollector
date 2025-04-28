@@ -76,7 +76,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<GOGGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = new();
+        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = [];
 
         try
         {
@@ -100,7 +100,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 };
             }
 
-            Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> installedGames = new();
+            Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> installedGames = [];
             foreach (var subKeyName in subKeyNames)
             {
                 var regGame = ParseSubKey(gogKey, subKeyName, settings?.BaseOnly);

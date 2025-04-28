@@ -43,7 +43,7 @@ public record ParadoxGame(ParadoxGameId Id,
              LastRunDate: LastLaunch is null ? null : DateTimeOffset.FromUnixTimeMilliseconds((long)LastLaunch).UtcDateTime,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["TaskbarIcon"] = new() { AppTaskbarIcon == default ? "" : AppTaskbarIcon.GetFullPath(), },
-                 ["Background"] = new() { Background == default ? "" : Background.GetFullPath(), },
-                 ["Logo"] = new() { Logo == default ? "" : Logo.GetFullPath(), },
+                 ["TaskbarIcon"] = [AppTaskbarIcon == default ? "" : AppTaskbarIcon.GetFullPath(),],
+                 ["Background"] = [Background == default ? "" : Background.GetFullPath(),],
+                 ["Logo"] = [Logo == default ? "" : Logo.GetFullPath(),],
              });
