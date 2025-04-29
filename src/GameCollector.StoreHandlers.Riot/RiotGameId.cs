@@ -16,9 +16,6 @@ public readonly partial struct RiotGameId : IAugmentWith<DefaultEqualityComparer
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class RiotGameIdComparer(StringComparison stringComparison) : IEqualityComparer<RiotGameId>

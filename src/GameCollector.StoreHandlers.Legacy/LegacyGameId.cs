@@ -16,9 +16,6 @@ public readonly partial struct LegacyGameId : IAugmentWith<DefaultEqualityCompar
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class LegacyGameIdComparer(StringComparison stringComparison) : IEqualityComparer<LegacyGameId>

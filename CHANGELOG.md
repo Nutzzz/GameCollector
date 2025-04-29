@@ -33,6 +33,7 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 - Upgrade to .NET 9 and C# 12
 - Update dependencies
+- Code simplifications
 
 ### Fixed
 

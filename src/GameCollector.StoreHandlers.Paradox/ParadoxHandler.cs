@@ -19,12 +19,9 @@ namespace GameCollector.StoreHandlers.Paradox;
 /// Handler for finding games installed with Paradox Launcher.
 /// </summary>
 /// <remarks>
-/// Uses json files:
+/// Constructor. Uses json files:
 ///   %AppData%\Paradox Interactive\launcher-v2\userSettings.json
 ///   %AppData%\Paradox Interactive\launcher-v2\game-metadata\game-metadata
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

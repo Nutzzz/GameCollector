@@ -19,11 +19,8 @@ namespace GameCollector.StoreHandlers.Plarium;
 /// Handler for finding games installed with Plarium Play.
 /// </summary>
 /// <remarks>
-/// Uses json file:
+/// Constructor. Uses json file:
 ///   %LocalAppData%\PlariumPlay\gamestorage.gsfn
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="fileSystem">
 /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use

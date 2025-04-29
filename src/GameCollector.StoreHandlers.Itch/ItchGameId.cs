@@ -16,9 +16,6 @@ public readonly partial struct ItchGameId : IAugmentWith<DefaultEqualityComparer
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class ItchGameIdComparer(StringComparison stringComparison) : IEqualityComparer<ItchGameId>

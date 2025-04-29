@@ -17,12 +17,9 @@ namespace GameCollector.StoreHandlers.GameJolt;
 /// Handler for finding games installed with Game Jolt Client.
 /// </summary>
 /// <remarks>
-/// Uses JSON files:
+/// Constructor. Uses JSON files:
 ///   %AppDataLocal%\game-jolt-client\User Data\Default\games.wttf
 ///   %AppDataLocal%\game-jolt-client\User Data\Default\packages.wttf
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="fileSystem">
 /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use

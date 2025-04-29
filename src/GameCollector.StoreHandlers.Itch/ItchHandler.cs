@@ -18,11 +18,8 @@ namespace GameCollector.StoreHandlers.Itch;
 /// Handler for finding games installed with itch.
 /// </summary>
 /// <remarks>
-/// Uses SQLite database:
+/// Constructor. Uses SQLite database:
 ///   %AppData%\itch\db\butler.db
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="fileSystem">
 /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use

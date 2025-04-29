@@ -16,9 +16,6 @@ public readonly partial struct BattleNetGameId : IAugmentWith<DefaultEqualityCom
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class BattleNetGameIdComparer(StringComparison stringComparison) : IEqualityComparer<BattleNetGameId>

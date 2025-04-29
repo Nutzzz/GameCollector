@@ -16,9 +16,6 @@ public readonly partial struct ParadoxGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class ParadoxGameIdComparer(StringComparison stringComparison) : IEqualityComparer<ParadoxGameId>
