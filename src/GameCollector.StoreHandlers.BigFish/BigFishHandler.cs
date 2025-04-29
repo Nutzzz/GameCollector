@@ -17,11 +17,8 @@ namespace GameCollector.StoreHandlers.BigFish;
 /// Handler for finding games installed with Big Fish Game Manager.
 /// </summary>
 /// <remarks>
-/// Uses Registry key:
+/// Constructor. Uses Registry key:
 ///   HKLM32\SOFTWARE\Big Fish Games\Persistence
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

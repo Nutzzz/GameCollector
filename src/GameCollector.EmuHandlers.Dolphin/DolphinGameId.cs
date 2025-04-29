@@ -16,9 +16,6 @@ public readonly partial struct DolphinGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class DolphinGameIdComparer(StringComparison stringComparison) : IEqualityComparer<DolphinGameId>

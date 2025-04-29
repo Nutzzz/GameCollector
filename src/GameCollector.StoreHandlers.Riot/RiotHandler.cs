@@ -20,13 +20,10 @@ namespace GameCollector.StoreHandlers.Riot;
 /// Handler for finding games installed with the Riot Client.
 /// </summary>
 /// <remarks>
-/// Uses json file:
+/// Constructor. Uses json file:
 ///   %ProgramData%\Riot Games\RiotClientInstalls.json
 /// and yaml files:
 ///   %ProgramData%\Riot Games\Metadata\*\*settings.yaml
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="fileSystem">
 /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use

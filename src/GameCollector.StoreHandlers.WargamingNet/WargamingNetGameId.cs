@@ -16,9 +16,6 @@ public readonly partial struct WargamingNetGameId : IAugmentWith<DefaultEquality
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class WargamingNetGameIdComparer(StringComparison stringComparison) : IEqualityComparer<WargamingNetGameId>

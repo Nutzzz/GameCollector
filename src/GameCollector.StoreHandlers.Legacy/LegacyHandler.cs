@@ -19,13 +19,10 @@ namespace GameCollector.StoreHandlers.Legacy;
 /// Handler for finding games installed with Legacy Games Launcher.
 /// </summary>
 /// <remarks>
-/// Uses json file:
+/// Constructor. Uses json file:
 ///   %AppData%\legacy-games-launcher\app-state.json
 /// and Registry key:
 ///   HKCU\Software\Legacy Games
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

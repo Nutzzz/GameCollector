@@ -16,9 +16,6 @@ public readonly partial struct RockstarGameId : IAugmentWith<DefaultEqualityComp
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class RockstarGameIdComparer(StringComparison stringComparison) : IEqualityComparer<RockstarGameId>

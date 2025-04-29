@@ -20,11 +20,8 @@ namespace GameCollector.StoreHandlers.Oculus;
 /// Handler for finding games installed with Oculus.
 /// </summary>
 /// <remarks>
-/// Uses SQLite database:
+/// Constructor. Uses SQLite database:
 ///   %AppData%\Oculus\sessions\_oaf\data.sqlite
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

@@ -12,6 +12,7 @@ using NexusMods.Paths;
 using OneOf;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameCollector.EmuHandlers.Dolphin;
 
@@ -33,15 +34,16 @@ namespace GameCollector.EmuHandlers.Dolphin;
 /// a custom implementation or just a mock of the interface.
 /// </param>
 /// <param name="dolphinPath"></param>
+/// <param name="logger">Logger.</param>
 [PublicAPI]
-public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, AbsolutePath dolphinPath) : AHandler<DolphinGame, DolphinGameId>
+public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, AbsolutePath dolphinPath, ILogger<DolphinHandler>? logger = null) : AHandler<DolphinGame, DolphinGameId>
 {
     internal const string DolphinRegKey = @"Software\Dolphin Emulator";
 
     private readonly IRegistry _registry = registry;
     private readonly IFileSystem _fileSystem = fileSystem;
     private readonly AbsolutePath _dolphinPath = dolphinPath;
-    private readonly ILogger? _logger;
+    private readonly ILogger? _logger = logger ?? NullLogger<DolphinHandler>.Instance;
 
     /// <inheritdoc/>
     public override IEqualityComparer<DolphinGameId>? IdEqualityComparer => DolphinGameIdComparer.Default;

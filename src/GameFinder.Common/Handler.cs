@@ -144,8 +144,8 @@ public enum Handler
     [Description("GameCollector.EmuHandlers.MAME")]
     EmuHandler_MAME,
     /// <summary>
-    /// TheGamesDb.net data handler
+    /// TheGamesDB.net data handler
     /// </summary>
-    [Description("GameCollector.DataHandlers.TheGamesDb")]
-    DataHandler_TheGamesDb,
+    [Description("GameCollector.DataHandlers.TheGamesDB")]
+    DataHandler_TheGamesDB,
 }

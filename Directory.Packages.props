@@ -25,6 +25,7 @@
     <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageVersion Include="System.ServiceProcess.ServiceController" Version="9.0.4" />
     <PackageVersion Include="System.Text.Json" Version="9.0.4" />
+    <PackageVersion Include="TheGamesDBApiWrapper" Version="3.0.0" />
     <PackageVersion Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
   <ItemGroup>

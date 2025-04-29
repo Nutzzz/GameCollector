@@ -34,6 +34,7 @@ The following launchers and emulators are supported:
 | RobotCache Client | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.RobotCache)](https://www.nuget.org/packages/GameCollector.StoreHandlers.RobotCache) |
 | Rockstar Games Launcher | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Rockstar)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Rockstar) |
 | [Steam](#steam) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Steam)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Steam) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Steam?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Steam) |
+| TheGamesDB | [![Nuget](https://img.shields.io/nuget/v/GameCollector.DataHandlers.TheGamesDB)](https://www.nuget.org/packages/GameCollector.DataHandlers.TheGamesDB) |
 | Ubisoft Connect | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Ubisoft)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Ubisoft) |
 | Wargaming.net Game Center | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.WargamingNet)](https://www.nuget.org/packages/GameCollector.StoreHandlers.WargamingNet) |
 | [Xbox Game Pass](#xbox-game-pass) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Xbox)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Xbox) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Xbox?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Xbox) |
@@ -55,7 +56,7 @@ The [example project](./other/GameFinder.Example) uses every available store han
 - Known issues: See [GameCollector issues here](https://github.com/Nutzzz/GameCollector/issues) or [upstream GameFinder issues here](https://github.com/erri120/GameFinder/issues). Please do not submit bugs/requests for GameCollector on GameFinder's GitHub.
 - DLCs/clones: When an entry is detected as a DLC addon (or a clone in the MAME handler), the `string? GameData.BaseGame` field is set to the ID of the main game (or sometimes the string "False" when the relationship can't be determined). To hide DLCs from the consumer application, use `FindAllGames(Settings)` where `bool Settings.BaseOnly = true`, or do not use entries where `string? GameData.BaseGame != null`.
 - Owned not-installed games: Some handlers can find owned not-installed games. To support this feature for Steam games, [see note below](#steam). To hide not-installed games, use `FindAllGames(Settings)` where `bool Settings.InstalledOnly = true`, or do not use entries where `bool GameData.IsInstalled == false`.
-- Unowned games: A few handlers can find all entries in the launcher database. To show only owned games, use `FindAllGames(Settings)` where `bool Settings.OwnedOnly = true`, or do not use entries where `bool GameData.IsOwned == false`.
+- Unowned games: A few handlers can find all entries in the launcher database. To show only owned games, use `FindAllGames(Settings)` where `bool Settings.OwnedOnly = true`, or do not use entries where `bool GameData.IsOwned == false`. Note that all games from the TheGamesDB handler will be marked as unowned.
 - Non-game items: Some handlers can find non-game (e.g., applications) items. To show only games, use `FindAllGames(Settings)` where `bool Settings.GamesOnly = true`, or parse the item's `List<string> GameData.Genres` for the appropriate string values.
 
 ### Dolphin/MAME
@@ -65,6 +66,10 @@ These handlers both require you pass an AbsolutePath to the emulator executable 
 ### Oculus
 
 If the Oculus service is running (as it does even when the program is not open), the database is usually locked and connot be read. The handler attempts to stop the service, but this only works if the consumer application is running as administrator.
+
+### TheGamesDB
+
+This is an *experimental* handler, with the idea of assisting the supplementation of information for prior found games.  It only searches for PC games.  However, because it relies on title match it will certainly result in both false-positives and false-negatives.
 
 ## Differences from Upstream
 
@@ -96,7 +101,7 @@ The TGame implementations of GameCollector's handlers inherit a generic GameData
   - `string? BaseGame`
   - `Dictionary<string, List<string>>? Metadata`
 
-The Metadata dictionary may include (depending on available information): "ReleaseDate", "Description", "Developers", "Publishers", "Genres", "ImageUrl", etc.
+The Metadata dictionary may include (depending on available information) fields like: "ReleaseDate", "Description", "Developers", "Publishers", "Genres", "ImageUrl", etc.
 
 ### Supported Emulators
 
@@ -104,6 +109,12 @@ This is a new category of handler for GameCollector. They are Windows-only for n
 
 - Dolphin
 - MAME
+
+### Supported Data Sources
+
+This is another new category of handler for GameCollector.
+
+- TheGamesDB.net
 
 ### New Supported Launchers
 

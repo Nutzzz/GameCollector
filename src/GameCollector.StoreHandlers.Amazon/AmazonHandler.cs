@@ -19,14 +19,11 @@ namespace GameCollector.StoreHandlers.Amazon;
 /// Handler for finding games installed with Amazon Games.
 /// </summary>
 /// <remarks>
-/// Uses SQLite databases:
+/// Constructor. Uses SQLite databases:
 ///   %LocalAppData%\Amazon Games\Data\Games\Sql\GameProductInfo.sqlite
 ///   %LocalAppData%\Amazon Games\Data\Games\Sql\GameInstallInfo.sqlite
 /// and Registry key:
 ///   HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

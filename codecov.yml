@@ -140,3 +140,7 @@ component_management:
       name: MAME
       paths:
         - "src/GameCollector.EmuHandlers.MAME/**"
+    - component_id: data_handler_TheGamesDB
+      name: TheGamesDB.net
+      paths:
+        - "src/GameCollector.DataHandlers.TheGamesDB/**"

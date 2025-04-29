@@ -16,9 +16,6 @@ public readonly partial struct AmazonGameId : IAugmentWith<DefaultEqualityCompar
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class AmazonGameIdComparer(StringComparison stringComparison) : IEqualityComparer<AmazonGameId>

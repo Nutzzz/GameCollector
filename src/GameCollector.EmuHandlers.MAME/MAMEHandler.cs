@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using GameFinder.Common;
-using GameFinder.RegistryUtils;
 using JetBrains.Annotations;
 using NexusMods.Paths;
 using OneOf;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameCollector.EmuHandlers.MAME;
 
@@ -36,14 +36,9 @@ namespace GameCollector.EmuHandlers.MAME;
 /// a custom implementation or just a mock of the interface.
 /// </param>
 /// <param name="mamePath"></param>
-/// <param name="registry">
-/// The implementation of <see cref="IRegistry"/> to use. For a shared instance
-/// use <see cref="WindowsRegistry.Shared"/> on Windows. On Linux use <langword>null</langword>.
-/// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
-/// of the interface.
-/// </param>
+/// <param name="logger">Logger.</param>
 [PublicAPI]
-public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, IRegistry? registry = null) : AHandler<MAMEGame, MAMEGameId>
+public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, ILogger<MAMEHandler>? logger = null) : AHandler<MAMEGame, MAMEGameId>
 {
     /// <summary>
     ///     Number of ROMs to process per batch. ROM files are batched when passing as arguments to MAME both 
@@ -51,10 +46,9 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
     /// </summary>
     private const int ROMsPerBatch = 500;
 
-    private readonly IRegistry? _registry;
     private readonly IFileSystem _fileSystem = fileSystem;
     private readonly AbsolutePath _mamePath = mamePath;
-    private readonly ILogger? _logger;
+    private readonly ILogger? _logger = logger ?? NullLogger<MAMEHandler>.Instance;
 
     private XmlReaderSettings _readerSettings = new();
     private event PropertyChangedEventHandler? _propertyChanged = null;

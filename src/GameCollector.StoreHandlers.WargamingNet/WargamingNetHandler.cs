@@ -17,11 +17,8 @@ namespace GameCollector.StoreHandlers.WargamingNet;
 /// Handler for finding games installed with Wargaming.net Game Center.
 /// </summary>
 /// <remarks>
-/// Uses files:
+/// Constructor. Uses files:
 ///   %ProgramData%\Wargaming.net\GameCenter\apps\
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

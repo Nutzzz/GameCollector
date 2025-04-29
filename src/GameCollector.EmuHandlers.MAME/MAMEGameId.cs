@@ -16,9 +16,6 @@ public readonly partial struct MAMEGameId : IAugmentWith<DefaultEqualityComparer
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class MAMEGameIdComparer(StringComparison stringComparison) : IEqualityComparer<MAMEGameId>

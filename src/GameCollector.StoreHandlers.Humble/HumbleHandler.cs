@@ -18,13 +18,10 @@ namespace GameCollector.StoreHandlers.Humble;
 /// Handler for finding games installed with Humble App.
 /// </summary>
 /// <remarks>
-/// Uses json file:
+/// Constructor. Uses json file:
 ///   %AppData%\Humble App\config.json
 /// and Registry key:
 ///   HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

@@ -48,6 +48,7 @@
         <ProjectReference Include="..\GameCollector.StoreHandlers.WargamingNet\GameCollector.StoreHandlers.WargamingNet.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.Dolphin\GameCollector.EmuHandlers.Dolphin.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.MAME\GameCollector.EmuHandlers.MAME.csproj" />
+        <ProjectReference Include="..\GameCollector.DataHandlers.TheGamesDb\GameCollector.DataHandlers.TheGamesDB.csproj" />
     </ItemGroup>
 
 </Project>

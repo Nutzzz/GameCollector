@@ -15,13 +15,10 @@ namespace GameCollector.StoreHandlers.Arc;
 /// Handler for finding games installed with Arc.
 /// </summary>
 /// <remarks>
-/// Uses Registry key:
+/// Constructor. Uses Registry key:
 ///   HKLM32\SOFTWARE\Perfect World Entertainment\Core
 ///     or
 ///   HKCU\Software\Arc\Core
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="registry">
 /// The implementation of <see cref="IRegistry"/> to use. For a shared instance

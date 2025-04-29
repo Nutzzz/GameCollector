@@ -39,7 +39,7 @@ using GameCollector.StoreHandlers.Ubisoft;
 using GameCollector.StoreHandlers.WargamingNet;
 using GameCollector.EmuHandlers.Dolphin;
 using GameCollector.EmuHandlers.MAME;
-//using GameCollector.DataHandlers.TheGamesDb;
+using GameCollector.DataHandlers.TheGamesDB;
 using Microsoft.Extensions.Logging;
 using NexusMods.Paths;
 using NLog;
@@ -153,6 +153,7 @@ public static class Program
             var windowsRegistry = WindowsRegistry.Shared;
             if (options.Steam) RunSteamHandler(settings, realFileSystem, windowsRegistry, options.SteamAPI);
             //if (options.Steam) tasks.Add(Task.Run(() => RunSteamHandler(settings, realFileSystem, windowsRegistry, options.SteamAPI), cancelToken));
+
             if (options.GOG) tasks.Add(Task.Run(() => RunGOGHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Epic || options.EGS) RunEGSHandler(settings, windowsRegistry, realFileSystem);
             //if (options.Epic || options.EGS) tasks.Add(Task.Run(() => RunEGSHandler(settings, windowsRegistry, realFileSystem), cancelToken));
@@ -257,10 +258,9 @@ public static class Program
                 RunSteamHandler(settings, realFileSystem, registry: null, options.SteamAPI);
         }
 
-        //if (options.TheGamesDB) tasks.Add(Task.Run(() => RunTheGamesDbHandler(settings, realFileSystem, options.TheGamesDBAPI), cancelToken));
+        if (options.TheGamesDB) tasks.Add(Task.Run(() => RunTheGamesDBHandler(settings, realFileSystem, options.TheGamesDBAPI), cancelToken));
 
         Task.WaitAll([.. tasks], cancelToken);
-
         /*
         Parallel.ForEach(tasks, task =>
         {
@@ -461,26 +461,23 @@ public static class Program
     private static void RunDolphinHandler(Settings settings, IRegistry registry, IFileSystem fileSystem, AbsolutePath path)
     {
         var logger = _provider.CreateLogger(nameof(DolphinHandler));
-        var handler = new DolphinHandler(registry, fileSystem, path); //, logger);
+        var handler = new DolphinHandler(registry, fileSystem, path, _loggerFactory.CreateLogger<DolphinHandler>());
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
     private static void RunMAMEHandler(Settings settings, IFileSystem fileSystem, AbsolutePath path)
     {
         var logger = _provider.CreateLogger(nameof(MAMEHandler));
-        var handler = new MAMEHandler(fileSystem, path, registry: null); //, logger);
+        var handler = new MAMEHandler(fileSystem, path, _loggerFactory.CreateLogger<MAMEHandler>());
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
-    /*
-    private static async void RunTheGamesDbHandler(IFileSystem fileSystem, string? tgdbApi, Settings settings)
+    private static async void RunTheGamesDBHandler(Settings settings, IFileSystem fileSystem, string? tgdbApi)
     {
-        var logger = _provider.CreateLogger(nameof(TheGamesDbHandler));
-        //var handler = new TheGamesDbHandler(fileSystem, tgdbApi, registry: null, logger);
-        var handler = new TheGamesDbHandler(fileSystem, registry: null, logger);
+        var logger = _provider.CreateLogger(nameof(TheGamesDBHandler));
+        var handler = new TheGamesDBHandler(fileSystem, tgdbApi, _loggerFactory.CreateLogger<TheGamesDBHandler>());
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
-    */
 
     private static List<AWinePrefix> LogWinePrefixes<TWinePrefix>(IWinePrefixManager<TWinePrefix> prefixManager, ILogger logger)
     where TWinePrefix : AWinePrefix

@@ -15,6 +15,8 @@ using Steam.Models.SteamCommunity;
 using SteamWebAPI2.Interfaces;
 using SteamWebAPI2.Utilities;
 using ValveKeyValue;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameCollector.StoreHandlers.Steam;
 
@@ -36,12 +38,14 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
     /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
     /// of the interface.
     /// </param>
+    /// <param name="logger">Logger.</param>
     /// <param name="apiKey"></param>
-    public SteamHandler(IFileSystem fileSystem, IRegistry? registry = null, string? apiKey = null)
+    public SteamHandler(IFileSystem fileSystem, IRegistry? registry = null, string ? apiKey = null, ILogger<SteamHandler>? logger = null)
     {
         _fileSystem = fileSystem;
         _registry = registry;
         _apiKey = apiKey;
+        _logger = logger ?? NullLogger<SteamHandler>.Instance;
     }
 
     internal IEnumerable<OneOf<SteamGame, ErrorMessage>> FindOwnedGamesFromAPI(

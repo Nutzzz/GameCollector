@@ -18,12 +18,9 @@ namespace GameCollector.StoreHandlers.IGClient;
 /// Handler for finding games installed with Indiegala IGClient.
 /// </summary>
 /// <remarks>
-/// Uses json files:
+/// Constructor. Uses json files:
 ///   %AppData%\IGClient\storage\installed.json
 ///   %AppData%\IGClient\config.json
-/// </remarks>
-/// <remarks>
-/// Constructor.
 /// </remarks>
 /// <param name="fileSystem">
 /// The implementation of <see cref="IFileSystem"/> to use. For a shared instance use

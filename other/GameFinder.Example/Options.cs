@@ -96,10 +96,8 @@ public class Options
     [Option("steam", HelpText = "Search for Steam games", Hidden = true, Group = "Handlers")]
     public bool Steam { get; set; } = false;
 
-    /*
-    [Option("tgdb", HelpText = "Search for TheGamesDb.net games", Group = "Handlers")]
+    [Option("tgdb", HelpText = "Search for TheGamesDB.net games [EXPERIMENTAL]", Group = "Handlers")]
     public bool TheGamesDB { get; set; } = false;
-    */
 
     [Option("ubisoft", HelpText = "Search for Ubisoft Connect games", Hidden = true, Group = "Handlers")]
     public bool Ubisoft { get; set; } = false;
@@ -121,10 +119,8 @@ public class Options
     [Option('s', "steamapi", HelpText = "Specify Steam API key from <https://steamcommunity.com/dev/apikey> (optional)", MetaValue = "KEY")]
     public string? SteamAPI { get; set; }
 
-    /*
-    [Option('t', "tgdbapi", HelpText = "Specify TheGamesDb.net API key from <https://api.thegamesdb.net/key.php> (optional)", MetaValue = "KEY")]
+    [Option('t', "tgdbapi", HelpText = "Specify TheGamesDB.net API key from <https://api.TheGamesDB.net/key.php> (optional)", MetaValue = "KEY")]
     public string? TheGamesDBAPI { get; set; }
-    */
 
     [Option('w', "wine", HelpText = "Search for Wine prefixes")]
     public bool Wine { get; set; } = false;

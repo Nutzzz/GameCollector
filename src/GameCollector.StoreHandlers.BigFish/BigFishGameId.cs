@@ -16,9 +16,6 @@ public readonly partial struct BigFishGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class BigFishGameIdComparer(StringComparison stringComparison) : IEqualityComparer<BigFishGameId>

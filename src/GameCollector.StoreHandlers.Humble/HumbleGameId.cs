@@ -16,9 +16,6 @@ public readonly partial struct HumbleGameId : IAugmentWith<DefaultEqualityCompar
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class HumbleGameIdComparer(StringComparison stringComparison) : IEqualityComparer<HumbleGameId>

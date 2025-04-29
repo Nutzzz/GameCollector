@@ -16,9 +16,6 @@ public readonly partial struct UbisoftGameId : IAugmentWith<DefaultEqualityCompa
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class UbisoftGameIdComparer(StringComparison stringComparison) : IEqualityComparer<UbisoftGameId>

@@ -16,9 +16,6 @@ public readonly partial struct IGClientGameId : IAugmentWith<DefaultEqualityComp
 }
 
 /// <inheritdoc/>
-/// <summary>
-/// Constructor.
-/// </summary>
 /// <param name="stringComparison"></param>
 [PublicAPI]
 public class IGClientGameIdComparer(StringComparison stringComparison) : IEqualityComparer<IGClientGameId>

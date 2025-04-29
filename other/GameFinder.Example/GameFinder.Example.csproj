@@ -53,7 +53,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!--<ProjectReference Include="..\..\src\GameCollector.DataHandlers.TheGamesDb\GameCollector.DataHandlers.TheGamesDb.csproj" />-->
+        <ProjectReference Include="..\..\src\GameCollector.DataHandlers.TheGamesDb\GameCollector.DataHandlers.TheGamesDB.csproj" />
     </ItemGroup>
 
     <ItemGroup>

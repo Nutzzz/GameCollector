@@ -14,17 +14,14 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 - Update documentation
 - For more, see [Issues](https://github.com/Nutzzz/GameCollector/issues)
 
-**WIP**:
-
-- Add [PkgHandlers](https://github.com/Nutzzz/GameCollector/pull/40) to find installed software, and to download free games
-- Add [DataHandlers](https://github.com/Nutzzz/GameCollector/pull/13) to download metadata and images from online sources
-
 ## [Released](https://github.com/Nutzzz/GameCollector/releases)
 
 ## [4.6.3-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.6.3.1) - 2025-04-29
 
 ## Added
 
+- Add EXPERIMENTAL TheGamesDb [DataHandlers](https://github.com/Nutzzz/GameCollector/pull/13) to download metadata and find available media from online sources
+- Add EXPERIMENTAL WinGet, Chocolatey, and Scoop [PkgHandlers](https://github.com/Nutzzz/GameCollector/pull/40) to find installed software and available free games
 - Upstream: Heroic (GOG): Support Linux native games
 - Upstream: Heroic (GOG): Include environment variables in the output
 - Upstream: Steam: add more logging
@@ -33,6 +30,7 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 - Upgrade to .NET 9 and C# 12
 - Update dependencies
+- Code simplifications
 
 ### Fixed
 
