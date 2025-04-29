@@ -4,13 +4,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using FluentResults;
 using GameFinder.Common;
 using GameFinder.RegistryUtils;
 using GameCollector.StoreHandlers.Steam.Models.ValueTypes;
 using GameCollector.StoreHandlers.Steam.Services;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NexusMods.Paths;
 using OneOf;
 using ValveKeyValue;
@@ -28,6 +28,7 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
 
     private readonly IRegistry? _registry;
     private readonly IFileSystem _fileSystem;
+    private readonly ILogger _logger;
 
     private static readonly KVSerializerOptions KvSerializerOptions =
         new()
@@ -50,10 +51,12 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
     /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
     /// of the interface.
     /// </param>
-    public SteamHandler(IFileSystem fileSystem, IRegistry? registry = null)
+    /// <param name="logger">Logger.</param>
+    public SteamHandler(IFileSystem fileSystem, IRegistry? registry, ILogger<SteamHandler>? logger = null)
     {
         _fileSystem = fileSystem;
         _registry = registry;
+        _logger = logger ?? NullLogger<SteamHandler>.Instance;
     }
 
     /// <inheritdoc/>
@@ -65,7 +68,7 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
     /// <inheritdoc/>
     public override AbsolutePath FindClient()
     {
-        var steamPathResult = SteamLocationFinder.FindSteam(_fileSystem, _registry);
+        var steamPathResult = SteamLocationFinder.TryFindSteam(_fileSystem, _registry);
         if (!steamPathResult.IsFailed)
         {
             return steamPathResult.Value;
@@ -90,12 +93,8 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
         List<OneOf<SteamGame, ErrorMessage>> allGames = new();
         Dictionary<AppId, OneOf<SteamGame, ErrorMessage>> installedGames = new();
 
-        var steamPathResult = SteamLocationFinder.FindSteam(_fileSystem, _registry);
-        if (steamPathResult.IsFailed)
-        {
-            allGames.Add(ConvertResultToErrorMessage(steamPathResult));
+        if (!SteamLocationFinder.TryFindSteam(_fileSystem, _registry, _logger, out var steamPath))
             return allGames;
-        }
 
         var steamPath = steamPathResult.Value;
         var libraryFoldersFilePath = SteamLocationFinder.GetLibraryFoldersFilePath(steamPath);
@@ -103,25 +102,33 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
         var libraryFoldersResult = LibraryFoldersManifestParser.ParseManifestFile(libraryFoldersFilePath);
         if (libraryFoldersResult.IsFailed)
         {
-            allGames.Add(ConvertResultToErrorMessage(libraryFoldersResult));
+            _logger.LogWarning("Failed to parse library folders file `{FilePath}`: `{Errors}`", libraryFoldersFilePath, libraryFoldersResult.Errors);
+            //allGames.Add(ConvertResultToErrorMessage(libraryFoldersResult));
             return allGames;
         }
 
         var libraryFolders = libraryFoldersResult.Value;
-        if (libraryFolders.Count == 0) return allGames;
+        _logger.LogInformation("Found `{Count}` library folders in the library folders file `{FilePath}`", libraryFolders.Count, libraryFoldersFilePath);
 
         foreach (var libraryFolder in libraryFolders)
         {
             var libraryFolderPath = libraryFolder.Path;
-            if (!_fileSystem.DirectoryExists(libraryFolderPath) ||
-                !_fileSystem.DirectoryExists(libraryFolderPath.Combine(Models.LibraryFolder.SteamAppsDirectoryName)))
+            _logger.LogDebug("Testing library folder `{Path}`", libraryFolderPath);
+
+            if (!_fileSystem.DirectoryExists(libraryFolderPath))
             {
-                allGames.Add(new ErrorMessage($"Steam Library at {libraryFolderPath} doesn't exist!"));
+                _logger.LogWarning("Steam library folder at `{Path}` doesn't exist", libraryFolderPath);
+                //allGames.Add(new ErrorMessage("Steam library folder at `{Path}` doesn't exist", libraryFolderPath));
                 continue;
             }
 
-            foreach (var acfFilePath in libraryFolder.EnumerateAppManifestFilePaths())
+            var appManifestFiles = libraryFolder.EnumerateAppManifestFilePaths().ToArray();
+            _logger.LogInformation("Found `{Count}` app manifest files in library folder `{LibraryFolder}`", appManifestFiles.Length, libraryFolderPath);
+
+            foreach (var acfFilePath in appManifestFiles)
             {
+                _logger.LogDebug("Testing app manifest file `{Path}`", acfFilePath);
+                
                 // skip Steamworks Common Redistributables
                 if (acfFilePath.FileName.Equals("228980", StringComparison.Ordinal))
                     continue;
@@ -129,7 +136,9 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
                 var appManifestResult = AppManifestParser.ParseManifestFile(acfFilePath);
                 if (appManifestResult.IsFailed)
                 {
-                    allGames.Add(ConvertResultToErrorMessage(appManifestResult));
+                    _logger.LogWarning("Failed to parse app manifest file `{Path}`: `{Errors}`", acfFilePath, appManifestResult.Errors);
+                    //allGames.Add(ConvertResultToErrorMessage(appManifestResult));
+
                     continue;
                 }
 
@@ -158,11 +167,5 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
             return installedGames.Values;
 
         return FindOwnedGamesFromAPI(installedGames, userId);
-    }
-
-    private static ErrorMessage ConvertResultToErrorMessage<T>(Result<T> result)
-    {
-        // TODO: for compatability, remove this mapping once FindAllGames uses FluentResults
-        return new ErrorMessage(result.Errors.Select(x => x.Message).Aggregate((a, b) => $"{a}\n{b}"));
     }
 }

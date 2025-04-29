@@ -198,9 +198,13 @@ Initial release of GameCollector
 
 # Upstream Changelog
 
-## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.6.2...HEAD)
+## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.6.3...HEAD)
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
+
+## [4.6.3](https://github.com/erri120/GameFinder/compare/v4.6.2...v4.6.3) - 2025-04-29
+
+- Steam: add more logging
 
 ## [4.6.2](https://github.com/erri120/GameFinder/compare/v4.6.1...v4.6.2) - 2025-04-22
 
