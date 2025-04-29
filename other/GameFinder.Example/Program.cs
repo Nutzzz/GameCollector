@@ -57,6 +57,7 @@ namespace GameCollector;
 public static class Program
 {
     private static NLogLoggerProvider _provider = null!;
+    private static NLogLoggerFactory _loggerFactory = null!;
 
     public static void Main(string[] args)
     {
@@ -93,8 +94,9 @@ public static class Program
 
         LogManager.Configuration = config;
         _provider = new NLogLoggerProvider();
+        _loggerFactory = new NLogLoggerFactory();
 
-        var logger = _provider.CreateLogger(nameof(Program));
+        var logger = _loggerFactory.CreateLogger(nameof(Program));
 
         Parser.Default
             .ParseArguments<Options>(args)
@@ -327,7 +329,7 @@ public static class Program
         string? steamAPI = null)
     {
         var logger = _provider.CreateLogger(nameof(SteamHandler));
-        var handler = new SteamHandler(fileSystem, registry, steamAPI);
+        var handler = new SteamHandler(fileSystem, registry, steamAPI, _loggerFactory.CreateLogger<SteamHandler>());
         LogGamesAndErrors(handler.FindAllGames(settings), logger, game =>
         {
             if (!OperatingSystem.IsLinux()) return;

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [Semantic Versioning](https://semver.org), for the moment this project simply uses GameFinder's version number and adds a new digit to the end. Where normally a fourth digit would be used for hotfixes or pre-release versions, because GameCollector is still in its infancy, breaking changes may occur between point releases. Because the scope of this project is so much larger than upstream, eventually a different versioning scheme will need to be used.
 
-## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.6.2.1...HEAD)
+## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.6.3.1...HEAD)
 
 **TODO**:
 
@@ -21,12 +21,13 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 ## [Released](https://github.com/Nutzzz/GameCollector/releases)
 
-## [4.6.2-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.6.2.1) - 2025-04-23
+## [4.6.3-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.6.3.1) - 2025-04-29
 
 ## Added
 
 - Upstream: Heroic (GOG): Support Linux native games
 - Upstream: Heroic (GOG): Include environment variables in the output
+- Upstream: Steam: add more logging
 
 ### Changed
 
@@ -198,9 +199,13 @@ Initial release of GameCollector
 
 # Upstream Changelog
 
-## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.6.2...HEAD)
+## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.6.3...HEAD)
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
+
+## [4.6.3](https://github.com/erri120/GameFinder/compare/v4.6.2...v4.6.3) - 2025-04-29
+
+- Steam: add more logging
 
 ## [4.6.2](https://github.com/erri120/GameFinder/compare/v4.6.1...v4.6.2) - 2025-04-22
 
