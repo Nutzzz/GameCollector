@@ -57,14 +57,16 @@ public sealed record LibraryFolder
     /// </summary>
     public Size GetFreeSpaceEstimate() => TotalDiskSize - GetTotalSizeOfInstalledApps();
 
-    public static readonly RelativePath SteamAppsDirectoryName = "steamapps".ToRelativePath();
+    public static readonly RelativePath SteamAppsDirectoryName = "steamapps";
 
     /// <summary>
     /// Returns an enumerable for every <c>appmanifest_*.acf</c> file path in the current library.
     /// </summary>
     public IEnumerable<AbsolutePath> EnumerateAppManifestFilePaths()
     {
-        return Path.Combine(SteamAppsDirectoryName).EnumerateFiles("*.acf", recursive: false);
+        var steamAppsDirectory = Path.Combine(SteamAppsDirectoryName);
+        if (!steamAppsDirectory.DirectoryExists()) return Enumerable.Empty<AbsolutePath>();
+        return steamAppsDirectory.EnumerateFiles("*.acf", recursive: false);
     }
 
     #endregion

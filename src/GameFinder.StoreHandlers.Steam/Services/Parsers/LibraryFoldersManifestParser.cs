@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FluentResults;
 using GameCollector.StoreHandlers.Steam.Models;
 using GameCollector.StoreHandlers.Steam.Models.ValueTypes;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 using NexusMods.Paths;
 using ValveKeyValue;
 using static GameCollector.StoreHandlers.Steam.Services.ParserHelpers;

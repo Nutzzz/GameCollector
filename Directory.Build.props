@@ -1,8 +1,8 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-        <VersionPrefix>4.5.0</VersionPrefix>
+        <VersionPrefix>4.6.3</VersionPrefix>
         <Authors>Nutzzz, erri120</Authors>
         <PackageProjectUrl>https://github.com/Nutzzz/GameCollector</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
