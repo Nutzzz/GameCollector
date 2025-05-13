@@ -77,7 +77,7 @@ public class WargamingNetHandler(IRegistry registry, IFileSystem fileSystem) : A
                 {
                     if (icon.Contains(',', StringComparison.Ordinal))
                         icon = icon[..icon.LastIndexOf(',')];
-                    if (Path.IsPathRooted(icon))
+                    if (Path.IsPathFullyQualified(icon))
                         return _fileSystem.FromUnsanitizedFullPath(icon);
                 }
             }
@@ -113,7 +113,7 @@ public class WargamingNetHandler(IRegistry registry, IFileSystem fileSystem) : A
 
         foreach (var appPath in appPaths)
         {
-            if (!Path.IsPathRooted(appPath))
+            if (!Path.IsPathFullyQualified(appPath))
                 continue;
 
             var path = _fileSystem.FromUnsanitizedFullPath(appPath);
@@ -209,7 +209,7 @@ public class WargamingNetHandler(IRegistry registry, IFileSystem fileSystem) : A
             {
                 if (strIcon.Contains(',', StringComparison.Ordinal))
                     strIcon = strIcon[..strIcon.LastIndexOf(',')];
-                if (Path.IsPathRooted(strIcon))
+                if (Path.IsPathFullyQualified(strIcon))
                     icon = _fileSystem.FromUnsanitizedFullPath(strIcon);
             }
             else if (path != default)
@@ -229,7 +229,7 @@ public class WargamingNetHandler(IRegistry registry, IFileSystem fileSystem) : A
                     unArgs = strUninst[(i + 1)..];
                     strUninst = strUninst[..i].Trim('\"');
                 }
-                if (Path.IsPathRooted(strUninst))
+                if (Path.IsPathFullyQualified(strUninst))
                     uninst = _fileSystem.FromUnsanitizedFullPath(strUninst);
                 /*
                 if (uninst.FileExists &&

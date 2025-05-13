@@ -73,7 +73,7 @@ public class IGClientHandler(IFileSystem fileSystem, IRegistry? registry = null)
             {
                 if (icon.Contains(',', StringComparison.Ordinal))
                     icon = icon[..icon.LastIndexOf(',')];
-                if (Path.IsPathRooted(icon))
+                if (Path.IsPathFullyQualified(icon))
                     return _fileSystem.FromUnsanitizedFullPath(icon);
             }
         }
@@ -152,7 +152,7 @@ public class IGClientHandler(IFileSystem fileSystem, IRegistry? registry = null)
                 AbsolutePath path = new();
                 foreach (var gamePath in game.Path)
                 {
-                    if (Path.IsPathRooted(gamePath))
+                    if (Path.IsPathFullyQualified(gamePath))
                         path = _fileSystem.FromUnsanitizedFullPath(gamePath);
                 }
                 var target = game.Target;

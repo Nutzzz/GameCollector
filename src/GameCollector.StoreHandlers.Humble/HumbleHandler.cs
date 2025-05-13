@@ -71,7 +71,7 @@ public class HumbleHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
                 {
                     if (icon.Contains(',', StringComparison.Ordinal))
                         icon = icon[..icon.LastIndexOf(',')];
-                    if (Path.IsPathRooted(icon))
+                    if (Path.IsPathFullyQualified(icon))
                         return _fileSystem.FromUnsanitizedFullPath(icon);
                 }
             }
@@ -175,10 +175,11 @@ public class HumbleHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
                     }
                 }
 
+                var strPath = game.FilePath;
                 AbsolutePath path = new();
-                if (Path.IsPathRooted(game.FilePath))
+                if (!string.IsNullOrEmpty(strPath) && Path.IsPathFullyQualified(strPath))
                 {
-                    path = _fileSystem.FromUnsanitizedFullPath(game.FilePath);
+                    path = _fileSystem.FromUnsanitizedFullPath(strPath);
                     if (!string.IsNullOrEmpty(game.ExecutablePath))
                         launch = path.Combine(game.ExecutablePath);
                 }

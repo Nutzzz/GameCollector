@@ -57,14 +57,14 @@ public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<A
             using var regKey = localMachine32.OpenSubKey(Path.Combine(ArcRegKey, "Arc"));
             if (regKey is not null)
             {
-                if (regKey.TryGetString("launcher", out var launcher) && Path.IsPathRooted(launcher))
+                if (regKey.TryGetString("launcher", out var launcher) && Path.IsPathFullyQualified(launcher))
                     return _fileSystem.FromUnsanitizedFullPath(launcher);
             }
 
             using var regKey2 = currentUser.OpenSubKey(Path.Combine(ArcRegKey2, "Arc"));
             if (regKey2 is not null)
             {
-                if (regKey2.TryGetString("launcher", out var launcher) && Path.IsPathRooted(launcher))
+                if (regKey2.TryGetString("launcher", out var launcher) && Path.IsPathFullyQualified(launcher))
                     return _fileSystem.FromUnsanitizedFullPath(launcher);
             }
         }
@@ -85,7 +85,7 @@ public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<A
             {
                 if (arcClientKey is not null &&
                     arcClientKey.TryGetString("client", out var clientPath) &&
-                    Path.IsPathRooted(clientPath))
+                    Path.IsPathFullyQualified(clientPath))
                 {
                     var path = Path.GetDirectoryName(clientPath);
                     if (path is not null)
@@ -161,7 +161,7 @@ public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<A
             }
 
             var launch = new AbsolutePath();
-            if (subKey.TryGetString("LAUNCHER_PATH", out var launchStr) && Path.IsPathRooted(launchStr))
+            if (subKey.TryGetString("LAUNCHER_PATH", out var launchStr) && Path.IsPathFullyQualified(launchStr))
                 launch = fileSystem.FromUnsanitizedFullPath(launchStr);
 
             var found = false;
@@ -184,7 +184,7 @@ public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<A
             }
             if (!found)
             {
-                if (subKey.TryGetString("CLIENT_PATH", out var client) && Path.IsPathRooted(client))
+                if (subKey.TryGetString("CLIENT_PATH", out var client) && Path.IsPathFullyQualified(client))
                     icon = fileSystem.FromUnsanitizedFullPath(client);
                 else
                     icon = launch;
@@ -193,7 +193,7 @@ public class ArcHandler(IRegistry registry, IFileSystem fileSystem) : AHandler<A
             return new ArcGame(
                 AppId: ArcGameId.From(id),
                 Name: name,
-                InstallPath: Path.IsPathRooted(path) ? fileSystem.FromUnsanitizedFullPath(path) : new(),
+                InstallPath: Path.IsPathFullyQualified(path) ? fileSystem.FromUnsanitizedFullPath(path) : new(),
                 LauncherPath: launch,
                 Icon: icon);
         }

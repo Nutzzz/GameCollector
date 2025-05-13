@@ -66,7 +66,7 @@ public class PlariumHandler(IFileSystem fileSystem, IRegistry? registry = null) 
             using var regKey = currentUser.OpenSubKey(PlariumRegKey);
             if (regKey is not null)
             {
-                if (regKey.TryGetString("InstallFolder", out var folder) && Path.IsPathRooted(folder))
+                if (regKey.TryGetString("InstallFolder", out var folder) && Path.IsPathFullyQualified(folder))
                 {
                     var play = _fileSystem.FromUnsanitizedFullPath(folder).Combine("PlariumPlay.exe");
                     if (play.FileExists) return play;  // NB: The registry isn't always right
@@ -132,7 +132,7 @@ public class PlariumHandler(IFileSystem fileSystem, IRegistry? registry = null) 
             }
             else
             {
-                path = Path.IsPathRooted(strPath) ? _fileSystem.FromUnsanitizedFullPath(strPath) : new();
+                path = Path.IsPathFullyQualified(strPath) ? _fileSystem.FromUnsanitizedFullPath(strPath) : new();
                 if (!string.IsNullOrEmpty(gameName) && !string.IsNullOrEmpty(gameId))
                 {
                     gamePath = path.Combine(gameName).Combine(gameId);

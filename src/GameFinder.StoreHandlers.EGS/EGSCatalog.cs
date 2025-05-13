@@ -155,7 +155,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                         CatalogItemId: EGSGameId.From(id),
                         DisplayName: title,
                         InstallLocation: new(),
-                        CloudSaveFolder: Path.IsPathRooted(savePath) ? fileSystem.FromUnsanitizedFullPath(savePath) : new(),
+                        CloudSaveFolder: Path.IsPathFullyQualified(savePath) ? fileSystem.FromUnsanitizedFullPath(savePath) : new(),
                         IsInstalled: false,
                         MainGame: mainGame,
                         ImageTallUrl: imageUrl,

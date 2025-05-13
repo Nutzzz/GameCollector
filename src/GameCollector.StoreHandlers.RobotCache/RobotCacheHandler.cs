@@ -94,7 +94,7 @@ public class RobotCacheHandler(IFileSystem fileSystem) : AHandler<RobotCacheGame
 
         foreach (var libPath in libPaths)
         {
-            if (Path.IsPathRooted(libPath))
+            if (Path.IsPathFullyQualified(libPath))
             {
                 infoFiles = _fileSystem.FromUnsanitizedFullPath(libPath).Combine("rcdata").Combine("games")
                     .EnumerateFiles("stateInfo.json", recursive: true)

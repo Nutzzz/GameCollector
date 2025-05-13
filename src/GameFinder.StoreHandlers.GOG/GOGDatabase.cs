@@ -352,11 +352,11 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 AbsolutePath launchPath = new();
                 AbsolutePath exePath = new();
                 AbsolutePath installPath = new();
-                if (Path.IsPathRooted(launch))
+                if (!string.IsNullOrEmpty(launch) && Path.IsPathFullyQualified(launch))
                     launchPath = _fileSystem.FromUnsanitizedFullPath(launch);
-                if (Path.IsPathRooted(path))
+                if (!string.IsNullOrEmpty(path) && Path.IsPathFullyQualified(path))
                     installPath = _fileSystem.FromUnsanitizedFullPath(path);
-                if (Path.IsPathRooted(exe))
+                if (!string.IsNullOrEmpty(exe) && Path.IsPathFullyQualified(exe))
                 {
                     exePath = _fileSystem.FromUnsanitizedFullPath(exe);
                     if (installPath == default && !string.IsNullOrEmpty(exePath.Directory))

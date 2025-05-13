@@ -80,7 +80,7 @@ public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, 
         foreach (var game in ParseGameList(userPath, romPaths))
         {
             var file = game.File;
-            if (Path.IsPathRooted(file))
+            if (!string.IsNullOrEmpty(file) && Path.IsPathFullyQualified(file))
             {
                 var filePath = _fileSystem.FromUnsanitizedFullPath(file);
                 if (filePath.FileExists)
@@ -126,7 +126,7 @@ public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, 
         }
 
         var userPathEnv = Environment.GetEnvironmentVariable("DOLPHIN_EMU_USERPATH");
-        if (Path.IsPathRooted(userPathEnv))
+        if (!string.IsNullOrEmpty(userPathEnv) && Path.IsPathFullyQualified(userPathEnv))
         {
             userPath = _fileSystem.FromUnsanitizedFullPath(userPathEnv);
             if (userPath.DirectoryExists())
@@ -148,7 +148,7 @@ public partial class DolphinHandler(IRegistry registry, IFileSystem fileSystem, 
                             return userPath;
                     }
                 }
-                if (regKey.TryGetString("UserConfigPath", out var path) && Path.IsPathRooted(path))
+                if (regKey.TryGetString("UserConfigPath", out var path) && Path.IsPathFullyQualified(path))
                 {
                     userPath = _fileSystem.FromUnsanitizedFullPath(path);
                     if (userPath.DirectoryExists())

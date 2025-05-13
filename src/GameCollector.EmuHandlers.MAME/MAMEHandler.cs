@@ -191,7 +191,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
                 yield return new MAMEGame(
                     Name: MAMEGameId.From(game.Name),
                     Description: game.Machine.Description,
-                    Path: Path.IsPathRooted(game.Path) ? _fileSystem.FromUnsanitizedFullPath(game.Path) : new(),
+                    Path: Path.IsPathFullyQualified(game.Path) ? _fileSystem.FromUnsanitizedFullPath(game.Path) : new(),
                     MAMEExecutable: _mamePath,
                     CommandLineArgs: commandLineArgs,
                     Icon: _fileSystem.FromUnsanitizedFullPath(_mamePath.Directory).Combine("icons").Combine($"{game.Name}.ico"),
@@ -449,7 +449,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
         {
             _logger?.LogDebug("rompath: {path}", path);
             List<string> romFiles = [];
-            if (Path.IsPathRooted(path) && _fileSystem.FromUnsanitizedFullPath(path).DirectoryExists())
+            if (Path.IsPathFullyQualified(path) && _fileSystem.FromUnsanitizedFullPath(path).DirectoryExists())
             {
                 romFiles = [.. Directory.GetFiles(path, "*.zip")];
                 _logger?.LogDebug("{romcount} ROMs found", romFiles.Count);
@@ -553,7 +553,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
         foreach (var path in paths.Select(CleansePath))
         {
             // If path is absolute, add raw path
-            if (Path.IsPathRooted(path))
+            if (Path.IsPathFullyQualified(path))
                 absolutePaths.Add(path);
             else
             {

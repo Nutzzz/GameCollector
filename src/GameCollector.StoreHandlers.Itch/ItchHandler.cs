@@ -74,7 +74,7 @@ public class ItchHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
             {
                 if (regKey.TryGetString("DisplayVersion", out var ver) &&
                     regKey.TryGetString("InstallLocation", out var loc) &&
-                    Path.IsPathRooted(loc))
+                    Path.IsPathFullyQualified(loc))
 
                     return _fileSystem.FromUnsanitizedFullPath(loc).Combine($"app-{ver}");
             }
@@ -157,8 +157,8 @@ public class ItchHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
             yield return new ItchGame(
                 Id: ItchGameId.From(id),
                 Title: name,
-                Path: Path.IsPathRooted(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new(),
-                LaunchPath: Path.IsPathRooted(launch) ? _fileSystem.FromUnsanitizedFullPath(launch) : new(),
+                Path: Path.IsPathFullyQualified(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new(),
+                LaunchPath: Path.IsPathFullyQualified(launch) ? _fileSystem.FromUnsanitizedFullPath(launch) : new(),
                 OpenUrl: url,
                 InstalledAt: installDate,
                 SecondsRun: runTime,

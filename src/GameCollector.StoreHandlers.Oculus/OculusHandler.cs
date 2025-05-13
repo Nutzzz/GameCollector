@@ -58,7 +58,7 @@ public class OculusHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
             using var regKey = localMachine32.OpenSubKey(Path.Combine(OculusRegKey));
             if (regKey is not null)
             {
-                if (regKey.TryGetString("Base", out var basePath) && Path.IsPathRooted(basePath))
+                if (regKey.TryGetString("Base", out var basePath) && Path.IsPathFullyQualified(basePath))
                     return _fileSystem.FromUnsanitizedFullPath(basePath)
                         .Combine("Support")
                         .Combine("oculus-client")
@@ -265,12 +265,13 @@ public class OculusHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
                 {
                     AbsolutePath launch = new();
                     strLaunch = exePaths[id.ToString()];
-                    if (Path.IsPathRooted(strLaunch))
+                    if (Path.IsPathFullyQualified(strLaunch))
                         launch = _fileSystem.FromUnsanitizedFullPath(strLaunch);
                     games.Add(new OculusGame(
                         HashKey: OculusGameId.From(id),
                         DisplayName: displayName,
-                        InstallPath: Path.IsPathRooted(launch.Directory) ? _fileSystem.FromUnsanitizedFullPath(launch.Directory) : new(),
+                        InstallPath: (!string.IsNullOrEmpty(launch.Directory) && Path.IsPathFullyQualified(launch.Directory)) ?
+                            _fileSystem.FromUnsanitizedFullPath(launch.Directory) : new(),
                         LaunchFile: launch,
                         IsInstalled: true,
                         IsExpired: expired,

@@ -85,7 +85,7 @@ public class GameJoltHandler(IFileSystem fileSystem, IRegistry? registry = null)
             using var regKey = currentUser.OpenSubKey(Path.Combine(UninstallRegKey, "game-jolt-client_is1"));
             if (regKey is null) return default;
 
-            if (regKey.TryGetString("InstallLocation", out var installDir) && Path.IsPathRooted(installDir))
+            if (regKey.TryGetString("InstallLocation", out var installDir) && Path.IsPathFullyQualified(installDir))
                 return _fileSystem.FromUnsanitizedFullPath(installDir).Combine("GameJoltClient.exe");
         }
 
@@ -182,7 +182,7 @@ public class GameJoltHandler(IFileSystem fileSystem, IRegistry? registry = null)
                     AbsolutePath instDir = new();
                     AbsolutePath exePath = new();
 
-                    if (Path.IsPathRooted(path))
+                    if (!string.IsNullOrEmpty(path) && Path.IsPathFullyQualified(path))
                     {
                         instDir = _fileSystem.FromUnsanitizedFullPath(path);
 

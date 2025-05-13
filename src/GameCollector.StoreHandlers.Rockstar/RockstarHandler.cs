@@ -64,7 +64,7 @@ public class RockstarHandler : AHandler<RockstarGame, RockstarGameId>
             using var regKey = localMachine32.OpenSubKey(Path.Combine(UninstallRegKey, "Rockstar Games Launcher"));
             if (regKey is not null)
             {
-                if (regKey.TryGetString("DisplayIcon", out var icon) && Path.IsPathRooted(icon))
+                if (regKey.TryGetString("DisplayIcon", out var icon) && Path.IsPathFullyQualified(icon))
                     return _fileSystem.FromUnsanitizedFullPath(icon);
             }
         }
@@ -119,7 +119,7 @@ public class RockstarHandler : AHandler<RockstarGame, RockstarGameId>
             if (!subKey.TryGetString("InstallFolder", out var strPath))
                 return new ErrorMessage($"{subKey.GetName()} doesn't have a string value \"InstallFolder\"");
 
-            if (!Path.IsPathRooted(strPath))
+            if (!Path.IsPathFullyQualified(strPath))
                 return new ErrorMessage($"{strPath} is not a valid path");
 
             return ParseUninstallKey(unKey, subKeyName, _fileSystem.FromUnsanitizedFullPath(strPath));
@@ -161,7 +161,7 @@ public class RockstarHandler : AHandler<RockstarGame, RockstarGameId>
                         if (strUninst.Contains("\" ", StringComparison.Ordinal))
                         {
                             var uninstExe = strUninst[..strUninst.IndexOf("\" ", StringComparison.Ordinal)].Trim('\"');
-                            if (Path.IsPathRooted(uninstExe))
+                            if (Path.IsPathFullyQualified(uninstExe))
                             {
                                 uninst = _fileSystem.FromUnsanitizedFullPath(uninstExe);
                                 uninstArgs = strUninst[(strUninst.IndexOf("\" ", StringComparison.Ordinal) + 2)..];

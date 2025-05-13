@@ -91,12 +91,14 @@ public static class RegistryEntryParser
             {
                 AppId = appId,
                 RegistryPath = subKey,
-                DisplayIcon = Path.IsPathRooted(strIcon) ? fileSystem.FromUnsanitizedFullPath(strIcon) : null,
+                DisplayIcon = (!string.IsNullOrEmpty(strIcon) && Path.IsPathFullyQualified(strIcon)) ?
+                    fileSystem.FromUnsanitizedFullPath(strIcon) : null,
                 DisplayName = subKey.GetString("DisplayName") ?? "",
                 HelpLink = subKey.GetString("HelpLink") ?? "",
-                InstallLocation = Path.IsPathRooted(strLoc) ? fileSystem.FromUnsanitizedFullPath(strLoc) : null,
+                InstallLocation = (!string.IsNullOrEmpty(strLoc) && Path.IsPathFullyQualified(strLoc)) ?
+                    fileSystem.FromUnsanitizedFullPath(strLoc) : null,
                 Publisher = subKey.GetString("Publisher") ?? "",
-                UninstallExecutable = Path.IsPathRooted(strUnExe) ? fileSystem.FromUnsanitizedFullPath(strUnExe) : null,
+                UninstallExecutable = Path.IsPathFullyQualified(strUnExe) ? fileSystem.FromUnsanitizedFullPath(strUnExe) : null,
                 UninstallParameters = strUnParam,
                 URLInfoAbout = subKey.GetString("URLInfoAbout") ?? "",
             };

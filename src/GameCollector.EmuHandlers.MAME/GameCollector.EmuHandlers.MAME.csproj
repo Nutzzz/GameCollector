@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\GameFinder.Common\GameFinder.Common.csproj" />
-        <ProjectReference Include="..\GameFinder.RegistryUtils\GameFinder.RegistryUtils.csproj" />
     </ItemGroup>
 
     <ItemGroup>

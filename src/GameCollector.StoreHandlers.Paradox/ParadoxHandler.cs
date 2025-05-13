@@ -67,7 +67,7 @@ public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
             using var regKey = currentUser.OpenSubKey(ParadoxRegKey);
             if (regKey is not null)
             {
-                if (regKey.TryGetString("LauncherInstallation", out var launcher) && Path.IsPathRooted(launcher))
+                if (regKey.TryGetString("LauncherInstallation", out var launcher) && Path.IsPathFullyQualified(launcher))
                     return _fileSystem.FromUnsanitizedFullPath(launcher).Combine("bootstrapper-v2.exe");
             }
         }
@@ -147,7 +147,8 @@ public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
             {
                 var id = game.Id;
                 var name = game.Name ?? (game.Id?.Replace('_', ' ')) ?? "";
-                var exe = Path.IsPathRooted(game.ExePath) ? _fileSystem.FromUnsanitizedFullPath(game.ExePath) : new();
+                var exe = (!string.IsNullOrEmpty(game.ExePath) && Path.IsPathFullyQualified(game.ExePath)) ?
+                    _fileSystem.FromUnsanitizedFullPath(game.ExePath) : new();
                 var args = game.ExeArgs;
                 var strIcon = "";
                 var strTaskIcon = "";
@@ -175,7 +176,7 @@ public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
                 AbsolutePath path = new();
                 if (!string.IsNullOrEmpty(strPath))
                 {
-                    if (Path.IsPathRooted(strPath))
+                    if (Path.IsPathFullyQualified(strPath))
                         path = _fileSystem.FromUnsanitizedFullPath(strPath);
                     else
                         path = GetParadoxV2Path().Combine(strPath);
@@ -213,7 +214,7 @@ public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
                         GameDataPath: dataPath,
                         ExePath: exe,
                         ExeArgs: args,
-                        AppIcon: Path.IsPathRooted(strIcon) ? _fileSystem.FromUnsanitizedFullPath(strIcon) : new(),
+                        AppIcon: Path.IsPathFullyQualified(strIcon) ? _fileSystem.FromUnsanitizedFullPath(strIcon) : new(),
                         LastLaunch: lastLaunch,
                         NotFoundOnDisk: exe == default,
                         AppTaskbarIcon: Path.IsPathFullyQualified(strTaskIcon) ? _fileSystem.FromUnsanitizedFullPath(strTaskIcon) : new(),

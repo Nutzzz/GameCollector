@@ -65,7 +65,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 using var regKey2 = regKey.OpenSubKey("paths");
                 if (regKey2 is null) return default;
 
-                if (regKey2.TryGetString("client", out var clientPath) && Path.IsPathRooted(clientPath))
+                if (regKey2.TryGetString("client", out var clientPath) && Path.IsPathFullyQualified(clientPath))
                     return _fileSystem.FromUnsanitizedFullPath(clientPath).Combine(clientExe);
             }
         }
@@ -227,18 +227,19 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
 
             AbsolutePath exePath = default;
             if (exe is not null)
-                exePath = Path.IsPathRooted(exe) ? _fileSystem.FromUnsanitizedFullPath(exe) : new();
+                exePath = Path.IsPathFullyQualified(exe) ? _fileSystem.FromUnsanitizedFullPath(exe) : new();
 
             return new GOGGame(
                 Id: id,
                 Name: name,
-                Path: Path.IsPathRooted(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new(),
+                Path: Path.IsPathFullyQualified(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new(),
                 BuildId: buildId,
                 Launch: exePath,
                 LaunchUrl: $"goggalaxy://openGameView/{sId}",
                 LaunchParam: launchParam ?? "",
                 Exe: exePath,
-                UninstallCommand: Path.IsPathRooted(uninst) ? _fileSystem.FromUnsanitizedFullPath(uninst) : new(),
+                UninstallCommand: (!string.IsNullOrEmpty(uninst) && Path.IsPathFullyQualified(uninst)) ?
+                    _fileSystem.FromUnsanitizedFullPath(uninst) : new(),
                 IsInstalled: exePath != default && exePath.FileExists,
                 IsOwned: true,
                 SupportUrl: support ?? "",

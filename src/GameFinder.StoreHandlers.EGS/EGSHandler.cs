@@ -86,7 +86,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             using var regKey = currentUser.OpenSubKey(RegKey);
             if (regKey is null) return default;
 
-            if (regKey.TryGetString("ModSdkCommand", out var command) && Path.IsPathRooted(command))
+            if (regKey.TryGetString("ModSdkCommand", out var command) && Path.IsPathFullyQualified(command))
                 return _fileSystem.FromUnsanitizedFullPath(command);
         }
 
@@ -182,7 +182,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             }
 
             var loc = manifest.InstallLocation ?? "";
-            if (string.IsNullOrEmpty(loc) || !Path.IsPathRooted(loc))
+            if (string.IsNullOrEmpty(loc) || !Path.IsPathFullyQualified(loc))
             {
                 return new ErrorMessage($"\"{title}\" [{id}] Manifest {itemFile.GetFullPath()} does not have a value \"InstallLocation\"");
             }

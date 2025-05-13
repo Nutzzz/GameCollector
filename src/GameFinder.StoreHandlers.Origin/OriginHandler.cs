@@ -66,7 +66,7 @@ public class OriginHandler : AHandler<OriginGame, OriginGameId>
             using var regKey = localMachine32.OpenSubKey(@"SOFTWARE\Origin");
             if (regKey is null) return default;
 
-            if (regKey.TryGetString("ClientPath", out var clientPath) && Path.IsPathRooted(clientPath))
+            if (regKey.TryGetString("ClientPath", out var clientPath) && Path.IsPathFullyQualified(clientPath))
                 return _fileSystem.FromUnsanitizedFullPath(clientPath);
         }
 
@@ -142,7 +142,7 @@ public class OriginHandler : AHandler<OriginGame, OriginGameId>
 
             var game = new OriginGame(
                 Id: OriginGameId.From(id),
-                InstallPath: Path.IsPathRooted(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new()
+                InstallPath: Path.IsPathFullyQualified(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new()
             );
 
             return game;

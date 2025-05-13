@@ -60,7 +60,7 @@ public class AmazonHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
             using var regKey = currentUser.OpenSubKey(Path.Combine(UninstallRegKey, "{4DD10B06-78A4-4E6F-AA39-25E9C38FA568}"));
             if (regKey is not null)
             {
-                if (regKey.TryGetString("InstallLocation", out var app) && Path.IsPathRooted(app))
+                if (regKey.TryGetString("InstallLocation", out var app) && Path.IsPathFullyQualified(app))
                     return _fileSystem.FromUnsanitizedFullPath(app).Combine("Amazon Games.exe");
             }
         }
@@ -204,7 +204,7 @@ public class AmazonHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
 
                 var id = AmazonGameId.From(strId);
                 var dir = install.InstallDirectory;
-                if (dir is not null && Path.IsPathRooted(dir))
+                if (dir is not null && Path.IsPathFullyQualified(dir))
                     path = _fileSystem.FromUnsanitizedFullPath(dir);
                 else
                 {
@@ -519,9 +519,9 @@ public class AmazonHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
             return new AmazonGame(
                 ProductId: AmazonGameId.From(gameId),
                 ProductTitle: name,
-                InstallDirectory: Path.IsPathRooted(path) ? fileSystem.FromUnsanitizedFullPath(path) : new(),
-                Command: Path.IsPathRooted(launch) ? fileSystem.FromUnsanitizedFullPath(launch) : new(),
-                Uninstall: Path.IsPathRooted(uninst) ? fileSystem.FromUnsanitizedFullPath(uninst) : new(),
+                InstallDirectory: Path.IsPathFullyQualified(path) ? fileSystem.FromUnsanitizedFullPath(path) : new(),
+                Command: Path.IsPathFullyQualified(launch) ? fileSystem.FromUnsanitizedFullPath(launch) : new(),
+                Uninstall: Path.IsPathFullyQualified(uninst) ? fileSystem.FromUnsanitizedFullPath(uninst) : new(),
                 ProductPublisher: pub
             );
         }

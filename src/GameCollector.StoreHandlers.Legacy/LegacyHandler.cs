@@ -70,7 +70,7 @@ public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
             using var regKey = localMachine64.OpenSubKey(Path.Combine(UninstallRegKey, "da414c81-a9fd-5732-bd5e-8acced116298"));
             if (regKey is not null)
             {
-                if (regKey.TryGetString("DisplayIcon", out var icon) && Path.IsPathRooted(icon))
+                if (regKey.TryGetString("DisplayIcon", out var icon) && Path.IsPathFullyQualified(icon))
                 {
                     return _fileSystem.FromUnsanitizedFullPath(icon).Parent;
                 }
@@ -346,7 +346,7 @@ public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
 
             AbsolutePath instDir = new();
             AbsolutePath exePath = new();
-            if (Path.IsPathRooted(path))
+            if (Path.IsPathFullyQualified(path))
             {
                 instDir = _fileSystem.FromUnsanitizedFullPath(path);
                 if (subKey.TryGetString("GameExe", out var exe))
@@ -362,8 +362,8 @@ public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
                 ProductName: name,
                 InstDir: instDir,
                 ExePath: exePath,
-                DisplayIcon: Path.IsPathRooted(icon) ? _fileSystem.FromUnsanitizedFullPath(icon) : exePath,
-                UninstallString: Path.IsPathRooted(uninstall) ? _fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
+                DisplayIcon: Path.IsPathFullyQualified(icon) ? _fileSystem.FromUnsanitizedFullPath(icon) : exePath,
+                UninstallString: Path.IsPathFullyQualified(uninstall) ? _fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
                 IsInstalled: true,
                 Publisher: publisher
             );

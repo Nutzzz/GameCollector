@@ -71,7 +71,7 @@ public class UbisoftHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
             using var regKey = localMachine32.OpenSubKey(ConnectRegKey);
             if (regKey is not null)
             {
-                if (regKey.TryGetString("InstallDir", out var install) && Path.IsPathRooted(install))
+                if (regKey.TryGetString("InstallDir", out var install) && Path.IsPathFullyQualified(install))
                     return _fileSystem.FromUnsanitizedFullPath(install).Combine("UbisoftConnect.exe");
             }
         }

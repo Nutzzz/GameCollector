@@ -57,7 +57,7 @@ public class BigFishHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
             using var regKey = localMachine32.OpenSubKey(Path.Combine(BigFishRegKey, "Client"));
             if (regKey is null) return default;
 
-            if (regKey.TryGetString("InstallationPath", out var installPath) && Path.IsPathRooted(installPath))
+            if (regKey.TryGetString("InstallationPath", out var installPath) && Path.IsPathFullyQualified(installPath))
                 return _fileSystem.FromUnsanitizedFullPath(installPath).Combine("bfgclient.exe");
         }
 
@@ -107,7 +107,7 @@ public class BigFishHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
                 using var subInst = bfgInstKey.OpenSubKey(subKeyName);
                 if (subInst is not null)
                 {
-                    if (subInst.TryGetString("", out var exe) && Path.IsPathRooted(exe))
+                    if (subInst.TryGetString("", out var exe) && Path.IsPathFullyQualified(exe))
                     {
                         launch = _fileSystem.FromUnsanitizedFullPath(exe);
                         if (launch.FileExists)
@@ -142,16 +142,16 @@ public class BigFishHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
                         isExpired = true;
                     }
 
-                    if (!found && subDb.TryGetString("ExecutablePath", out var exe) && Path.IsPathRooted(exe))
+                    if (!found && subDb.TryGetString("ExecutablePath", out var exe) && Path.IsPathFullyQualified(exe))
                     {
                         launch = _fileSystem.FromUnsanitizedFullPath(exe);
                         path = _fileSystem.FromUnsanitizedFullPath(launch.Directory);
                     }
-                    if (subDb.TryGetString("feature", out var iconPath) && Path.IsPathRooted(iconPath))     // 175x150
+                    if (subDb.TryGetString("feature", out var iconPath) && Path.IsPathFullyQualified(iconPath))     // 175x150
                         icon = _fileSystem.FromUnsanitizedFullPath(iconPath);
-                    else if (subDb.TryGetString("Thumbnail", out iconPath) && Path.IsPathRooted(iconPath))  // 80x80
+                    else if (subDb.TryGetString("Thumbnail", out iconPath) && Path.IsPathFullyQualified(iconPath))  // 80x80
                         icon = _fileSystem.FromUnsanitizedFullPath(iconPath);
-                    else if (subDb.TryGetString("Icon", out iconPath) && Path.IsPathRooted(iconPath))       // 60x40
+                    else if (subDb.TryGetString("Icon", out iconPath) && Path.IsPathFullyQualified(iconPath))       // 60x40
                         icon = _fileSystem.FromUnsanitizedFullPath(iconPath);
 
                     if (subDb.TryGetValue("LastActionTime", out tmp))
@@ -178,15 +178,15 @@ public class BigFishHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
 
                 if (icon == default)
                 {
-                    if (subUnKey.TryGetString("DisplayIcon", out var iconPath) && Path.IsPathRooted(iconPath))
+                    if (subUnKey.TryGetString("DisplayIcon", out var iconPath) && Path.IsPathFullyQualified(iconPath))
                         icon = _fileSystem.FromUnsanitizedFullPath(iconPath);
                 }
                 if (path == default)
                 {
-                    if (subUnKey.TryGetString("InstallLocation", out var pathStr) && Path.IsPathRooted(pathStr))
+                    if (subUnKey.TryGetString("InstallLocation", out var pathStr) && Path.IsPathFullyQualified(pathStr))
                         path = _fileSystem.FromUnsanitizedFullPath(pathStr);
                 }
-                if (subUnKey.TryGetString("UninstallString", out var uninstPath) && Path.IsPathRooted(uninstPath))
+                if (subUnKey.TryGetString("UninstallString", out var uninstPath) && Path.IsPathFullyQualified(uninstPath))
                     uninstall = _fileSystem.FromUnsanitizedFullPath(uninstPath.Trim('\"'));
             }
 

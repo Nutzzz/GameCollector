@@ -83,7 +83,7 @@ public class BattleNetHandler : AHandler<BattleNetGame, BattleNetGameId>
                 {
                     if (appIcon.Contains(',', StringComparison.Ordinal))
                         appIcon = appIcon[..appIcon.LastIndexOf(',')];
-                    if (Path.IsPathRooted(appIcon))
+                    if (Path.IsPathFullyQualified(appIcon))
                         return _fileSystem.FromUnsanitizedFullPath(appIcon);
                 }
             }
@@ -164,9 +164,9 @@ public class BattleNetHandler : AHandler<BattleNetGame, BattleNetGameId>
             return new BattleNetGame(
                 ProductId: BattleNetGameId.From(id),
                 DirName: name,
-                InstallPath: Path.IsPathRooted(installPath) ? _fileSystem.FromUnsanitizedFullPath(installPath) : new(),
-                BinaryPath: Path.IsPathRooted(launch) ? _fileSystem.FromUnsanitizedFullPath(launch) : new(),
-                Uninstaller: Path.IsPathRooted(uninstall) ? _fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
+                InstallPath: Path.IsPathFullyQualified(installPath) ? _fileSystem.FromUnsanitizedFullPath(installPath) : new(),
+                BinaryPath: Path.IsPathFullyQualified(launch) ? _fileSystem.FromUnsanitizedFullPath(launch) : new(),
+                Uninstaller: Path.IsPathFullyQualified(uninstall) ? _fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
                 UninstallArgs: $"--lang={lang} --uid={id} --displayname=\"{name}\"",
                 LastPlayed: lastRunDate,
                 AppDescription: description

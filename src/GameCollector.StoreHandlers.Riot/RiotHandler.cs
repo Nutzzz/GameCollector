@@ -77,7 +77,7 @@ public class RiotHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
             if (client is not null && !string.IsNullOrEmpty(client.RcLive))
             {
                 var clientPath = client.RcLive;
-                if (Path.IsPathRooted(clientPath))
+                if (Path.IsPathFullyQualified(clientPath))
                     return _fileSystem.FromUnsanitizedFullPath(clientPath);
             }
         }
@@ -191,7 +191,7 @@ public class RiotHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
             return new RiotGame(
                 ProductId: RiotGameId.From(id),
                 Name: Path.GetFileNameWithoutExtension(game.ShortcutName ?? ""),
-                ProductInstallPath: Path.IsPathRooted(game.ProductInstallFullPath) ? _fileSystem.FromUnsanitizedFullPath(game.ProductInstallFullPath) : new(),
+                ProductInstallPath: Path.IsPathFullyQualified(game.ProductInstallFullPath) ? _fileSystem.FromUnsanitizedFullPath(game.ProductInstallFullPath) : new(),
                 ClientPath: _fileSystem.FromUnsanitizedFullPath(launch),
                 LaunchArgs: launchArgs,
                 Icon: icon,

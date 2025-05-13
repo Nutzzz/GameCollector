@@ -91,7 +91,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
             using var regKey = localMachine.OpenSubKey(@"SOFTWARE\Electronic Arts\EA Desktop");
             if (regKey is null) return default;
 
-            if (regKey.TryGetString("LauncherAppPath", out var path) && Path.IsPathRooted(path))
+            if (regKey.TryGetString("LauncherAppPath", out var path) && Path.IsPathFullyQualified(path))
                 return _fileSystem.FromUnsanitizedFullPath(path);
         }
 
@@ -358,9 +358,9 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
         var sExeRegKey = "";
         AbsolutePath executable = new();
 
-        if (Path.IsPathRooted(executablePath))
+        if (Path.IsPathFullyQualified(executablePath))
             isInstalled = true;
-        else if (Path.IsPathRooted(baseInstallPath))
+        else if (Path.IsPathFullyQualified(baseInstallPath))
             isInstalled = true;
 
         var sInstFile = "";
@@ -389,7 +389,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
 
         if (isInstalled)
         {
-            if (!string.IsNullOrEmpty(executablePath) && Path.IsPathRooted(executablePath))
+            if (!string.IsNullOrEmpty(executablePath) && Path.IsPathFullyQualified(executablePath))
             {
                 executable = fileSystem.FromUnsanitizedFullPath(executablePath);
                 if (!executable.FileExists)
@@ -458,9 +458,9 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
         var game = new EADesktopGame(
             EADesktopGameId: EADesktopGameId.From(softwareId),
             Name: title,
-            BaseInstallPath: Path.IsPathRooted(baseInstallPath) ? fileSystem.FromUnsanitizedFullPath(baseInstallPath) : new(),
+            BaseInstallPath: Path.IsPathFullyQualified(baseInstallPath) ? fileSystem.FromUnsanitizedFullPath(baseInstallPath) : new(),
             Executable: executable,
-            UninstallCommand: Path.IsPathRooted(uninstall) ? fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
+            UninstallCommand: Path.IsPathFullyQualified(uninstall) ? fileSystem.FromUnsanitizedFullPath(uninstall) : new(),
             UninstallParameters: uninstallArgs,
             IsInstalled: isInstalled,
             IsDLC: isDLC,
