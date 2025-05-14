@@ -21,6 +21,7 @@ namespace GameFinder.Common;
 /// <param name="UninstallArgs"></param>
 /// <param name="UninstallUrl"></param>
 /// <param name="InstallDate"></param>
+/// <param name="UpdateDate"></param>
 /// <param name="LastRunDate"></param>
 /// <param name="NumRuns"></param>
 /// <param name="RunTime"></param>
@@ -46,6 +47,7 @@ public record GameData(Handler Handler,
                        string UninstallArgs = "",
                        string UninstallUrl = "",
                        DateTime? InstallDate = null,
+                       DateTime? UpdateDate = null,
                        DateTime? LastRunDate = null,
                        uint NumRuns = 0,
                        TimeSpan? RunTime = null,

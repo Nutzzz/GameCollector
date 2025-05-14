@@ -173,6 +173,7 @@ public class PlariumHandler(IFileSystem fileSystem, IRegistry? registry = null) 
                 InstallationPath: gamePath == default ? path : gamePath,
                 Launch: exe,
                 LaunchArgs: args,
+                NotFoundOnDisk: exe == default,
                 GameId: gameId,
                 GameName: gameName,
                 CompanyName: company);

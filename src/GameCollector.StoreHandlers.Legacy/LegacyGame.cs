@@ -17,7 +17,7 @@ namespace GameCollector.StoreHandlers.Legacy;
 /// <param name="UninstallString"></param>
 /// <param name="IsInstalled"></param>
 /// <param name="IsOwned"></param>
-/// <param name="NotFoundInData"></param>
+/// <param name="Problems"></param>
 /// <param name="Description"></param>
 /// <param name="Publisher"></param>
 /// <param name="Genre"></param>
@@ -31,7 +31,7 @@ public record LegacyGame(LegacyGameId InstallerUuid,
                        AbsolutePath UninstallString = new(),
                        bool IsInstalled = false,
                        bool IsOwned = false,
-                       bool NotFoundInData = false,
+                       IList<Problem>? Problems = null,
                        string? Description = "",
                        string? Publisher = "",
                        Genre? Genre = Genre.Unknown,
@@ -45,7 +45,7 @@ public record LegacyGame(LegacyGameId InstallerUuid,
              Uninstall: UninstallString,
              IsInstalled: IsInstalled,
              IsOwned: IsOwned,
-             Problems: NotFoundInData ? new List<Problem> { Problem.NotFoundInData } : null,
+             Problems: Problems,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
                  ["Description"] = [Description ?? "",],

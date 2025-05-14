@@ -24,7 +24,7 @@ public class MAMERunner
     /// </summary>
     public static void Stop(Process process)
     {
-        if (process == null || process.HasExited) return;
+        if (process is null || process.HasExited) return;
 
         logger.LogDebug("Stopping MAME; pid: {pid}", process.Id);
 

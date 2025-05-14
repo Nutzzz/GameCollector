@@ -215,9 +215,10 @@ public class ParadoxHandler(IRegistry registry, IFileSystem fileSystem) : AHandl
                         ExeArgs: args,
                         AppIcon: Path.IsPathRooted(strIcon) ? _fileSystem.FromUnsanitizedFullPath(strIcon) : new(),
                         LastLaunch: lastLaunch,
-                        AppTaskbarIcon: Path.IsPathRooted(strTaskIcon) ? _fileSystem.FromUnsanitizedFullPath(strTaskIcon) : new(),
-                        Background: Path.IsPathRooted(strBg) ? _fileSystem.FromUnsanitizedFullPath(strBg) : new(),
-                        Logo: Path.IsPathRooted(strLogo) ? _fileSystem.FromUnsanitizedFullPath(strLogo) : new()
+                        NotFoundOnDisk: exe == default,
+                        AppTaskbarIcon: Path.IsPathFullyQualified(strTaskIcon) ? _fileSystem.FromUnsanitizedFullPath(strTaskIcon) : new(),
+                        Background: Path.IsPathFullyQualified(strBg) ? _fileSystem.FromUnsanitizedFullPath(strBg) : new(),
+                        Logo: Path.IsPathFullyQualified(strLogo) ? _fileSystem.FromUnsanitizedFullPath(strLogo) : new()
                     ));
                 }
             }

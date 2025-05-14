@@ -70,7 +70,11 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
     /// <inheritdoc/>
     public override IEnumerable<OneOf<MAMEGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        return FindAllGames(settings?.InstalledOnly ?? false, settings?.BaseOnly ?? false);
+        return FindAllGames(availableOnly: settings?.InstalledOnly ?? false,
+                            parentsOnly: settings?.BaseOnly ?? false,
+                            noHacks : settings?.OfficialOnly ?? false,
+                            minimumStatus: (settings?.CompleteOnly ?? false) ? MachineStatus.Good :
+                                           (settings?.PlayableOnly ?? false) ? MachineStatus.Imperfect : MachineStatus.Preliminary);
     }
 
     /// <summary>
@@ -79,12 +83,14 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
     /// </summary>
     /// <param name="availableOnly">ROM file exists (and if doVerify is true, ROM is correct)</param>
     /// <param name="parentsOnly">Do not add clones</param>
+    /// <param name="noHacks">Attempt to remove bootlegs and hacks (based on manufacturer or title, may not be perfect)</param>
     /// <param name="doVerify">Verify ROM is correct for MAME version (this is very slow)</param>
     /// <param name="minimumStatus">Minimum emulation status (from "good", "imperfect", or "preliminary")</param>
     /// <returns></returns>
     public IEnumerable<OneOf<MAMEGame, ErrorMessage>> FindAllGames(
         bool? availableOnly = false,
         bool? parentsOnly = false,
+        bool? noHacks = false,
         bool doVerify = false,
         MachineStatus minimumStatus = MachineStatus.Imperfect)
     {
@@ -98,7 +104,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
             yield break;
         }
 
-        foreach (var game in GetGameList(progress => Progress = progress, availableOnly, parentsOnly, doVerify, minimumStatus))
+        foreach (var game in GetGameList(progress => Progress = progress, availableOnly, parentsOnly, noHacks, doVerify, minimumStatus))
         {
             if (!string.IsNullOrEmpty(game.Name) &&
                 game.Machine is not null &&
@@ -109,7 +115,8 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
                 var players = "";
                 var driverStatus = "";
                 var failedToVerify = false;
-                var statusNotMet = false;
+                var prelim = false;
+                var imperfect = false;
                 var gameCategory1 = "";
                 var gameCategory2 = "";
                 var gameCategory3 = "";
@@ -153,9 +160,14 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
                 else
                     continue; // this should have already been checked
 
-                if (!string.IsNullOrEmpty(driverStatus) &&
-                    ToMachineStatus(driverStatus) < MachineStatus.Imperfect)
-                    statusNotMet = true;
+                if (!string.IsNullOrEmpty(driverStatus))
+                {
+                    var status = ToMachineStatus(driverStatus);
+                    if (status == MachineStatus.Imperfect)
+                        imperfect = true;
+                    if (status == MachineStatus.Preliminary)
+                        prelim = true;
+                }
 
                 if (game.Category is not null)
                 {
@@ -166,8 +178,13 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
                 }
 
                 List<Problem> problems = [];
-                if (statusNotMet)
-                    problems.Add(Problem.DoesNotMeetRequirements);
+                if (prelim)
+                {
+                    problems.Add(Problem.Incomplete);
+                    problems.Add(Problem.Unplayable);
+                }
+                if (imperfect)
+                    problems.Add(Problem.Incomplete);
                 if (failedToVerify)
                     problems.Add(Problem.FailedToVerify);
 
@@ -203,13 +220,14 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
     /// <param name="progressCallback">Callback invoked with percentage complete</param>
     /// <param name="availableOnly">ROM file exists (and if doVerify is true, ROM is correct)</param>
     /// <param name="parentsOnly">Do not add clones</param>
+    /// <param name="noHacks">Attempt to remove bootlegs and hacks (based on manufacturer or title, may not be perfect)</param>
     /// <param name="doVerify">Verify ROM is correct for MAME version (this is very slow)</param>
     /// <param name="minimumStatus">Minimum emulation status (good, imperfect, preliminary, unknown)</param>
     /// <returns>Returns a <see cref="List{T}" /> of <see cref="Machine" />s</returns>
     [UnconditionalSuppressMessage(
         "Trimming",
         "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code")]
-    private List<ROMData> GetGameList(Action<int> progressCallback, bool? availableOnly, bool? parentsOnly, bool doVerify, MachineStatus minimumStatus)
+    private List<ROMData> GetGameList(Action<int> progressCallback, bool? availableOnly, bool? parentsOnly, bool? noHacks, bool doVerify, MachineStatus minimumStatus)
     {
         CancellationToken cancelToken = new();
         var gameList = new List<ROMData>();
@@ -247,7 +265,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
             var isVerified = false;
 
             // Perform initial validity checks
-            if (!IsGameValid(game, parentsOnly, minimumStatus))
+            if (!IsGameValid(game, parentsOnly, noHacks, minimumStatus))
                 continue;
 
             foreach (var romFile in romFiles)
@@ -289,8 +307,9 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
     /// </summary>
     /// <param name="machine">Class based on elements from MAME's <c>-listxml</c> output</param>
     /// <param name="parentsOnly">Do not add clones</param>
+    /// <param name="noHacks">Attempt to remove bootlegs and hacks (based on manufacturer or title, may not be perfect)</param>
     /// <param name="minimumStatus">Minimum emulation status (from "good", "imperfect", or "preliminary")</param>
-    private bool IsGameValid(Machine machine, bool? parentsOnly, MachineStatus minimumStatus)
+    private bool IsGameValid(Machine machine, bool? parentsOnly, bool? noHacks, MachineStatus minimumStatus)
     {
         if (!string.IsNullOrEmpty(machine.IsDevice) &&
             machine.IsDevice.Equals("yes", StringComparison.Ordinal))
@@ -334,6 +353,19 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
             ToMachineStatus(status) < minimumStatus)
         {
             _logger?.LogInformation("{name} not added to game list because it has a status of {status}", machine.Name, status);
+            return false;
+        }
+
+        // Skip bootlegs and hacks [have to work around manufacturer "Tandy Radio Shack" and titles "Shackled", "Nunchackun", "Chack'n Pop"]
+        if (noHacks == true && (machine.Manufacturer ?? "").StartsWith("bootleg", StringComparison.Ordinal) ||
+                               (machine.Manufacturer ?? "").StartsWith("hack", StringComparison.Ordinal) ||
+                               (machine.Description ?? "").Contains("bootleg", StringComparison.OrdinalIgnoreCase) ||
+                               (machine.Description ?? "").Contains("hack)", StringComparison.OrdinalIgnoreCase) ||
+                               (machine.Description ?? "").Contains("(hack", StringComparison.OrdinalIgnoreCase) ||
+                               (machine.Description ?? "").Contains(" hack ", StringComparison.OrdinalIgnoreCase) ||
+                               (machine.Description ?? "").Contains("hacked", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger?.LogInformation("{name} not added to game list as it is a bootleg or hack", machine.Name);
             return false;
         }
 
@@ -451,7 +483,7 @@ public partial class MAMEHandler(IFileSystem fileSystem, AbsolutePath mamePath, 
         while (line is not null)
         {
             if (line.StartsWith(key, StringComparison.Ordinal))
-                return new(ExtractConfigPaths(key, line));
+                return [.. ExtractConfigPaths(key, line)];
 
             line = stream.ReadLine();
         }

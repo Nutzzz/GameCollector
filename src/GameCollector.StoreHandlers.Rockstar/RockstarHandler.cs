@@ -185,6 +185,7 @@ public class RockstarHandler : AHandler<RockstarGame, RockstarGameId>
                         Launch: exe,
                         Uninstall: uninst,
                         UninstallArgs: uninstArgs,
+                        NotFoundOnDisk: exe == default,
                         Publisher: pub ?? "",
                         UrlInfoAbout: info ?? read ?? "",
                         HelpLink: help ?? "");
@@ -198,7 +199,8 @@ public class RockstarHandler : AHandler<RockstarGame, RockstarGameId>
                 Id: RockstarGameId.From(strId),
                 Name: strId ?? "",
                 InstallFolder: path,
-                Launch: exe);
+                Launch: exe,
+                NotFoundOnDisk: exe == default);
         }
         catch (Exception e)
         {

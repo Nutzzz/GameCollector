@@ -286,7 +286,8 @@ public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
                         exe,
                         IsInstalled: true,
                         IsOwned: true,
-                        NotFoundInData: true));
+                        // TODO: I don't remember, should NotFoundInData always be true here?
+                        Problems: MakeProblemsList(NotFoundInData: true, NotFoundOnDisk: exe == default)));
                 }
             }
             catch (Exception e)
@@ -422,5 +423,17 @@ public class LegacyHandler(IRegistry registry, IFileSystem fileSystem) : AHandle
         return _fileSystem.GetKnownPath(KnownPath.ApplicationDataDirectory)
             .Combine("legacy-games-launcher")
             .Combine("app-state.json");
+    }
+
+    private static List<Problem> MakeProblemsList(bool NotFoundInData, bool NotFoundOnDisk)
+    {
+        List<Problem> probs = [];
+
+        if (NotFoundInData)
+            probs.Add(Problem.NotFoundInData);
+        if (NotFoundOnDisk)
+            probs.Add(Problem.NotFoundOnDisk);
+
+        return probs;
     }
 }

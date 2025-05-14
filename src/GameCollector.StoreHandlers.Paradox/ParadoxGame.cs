@@ -16,6 +16,7 @@ namespace GameCollector.StoreHandlers.Paradox;
 /// <param name="ExePath"></param>
 /// <param name="ExeArgs"></param>
 /// <param name="LastLaunch"></param>
+/// <param name="NotFoundOnDisk"></param>
 /// <param name="AppIcon"></param>
 /// <param name="AppTaskbarIcon"></param>
 /// <param name="Background"></param>
@@ -29,6 +30,7 @@ public record ParadoxGame(ParadoxGameId Id,
                       string? ExeArgs = null,
                       AbsolutePath AppIcon = new(),
                       ulong? LastLaunch = null,
+                      bool NotFoundOnDisk = false,
                       AbsolutePath AppTaskbarIcon = new(),
                       AbsolutePath Background = new(),
                       AbsolutePath Logo = new()) :
@@ -41,6 +43,7 @@ public record ParadoxGame(ParadoxGameId Id,
              LaunchArgs: ExeArgs ?? "",
              Icon: AppIcon,
              LastRunDate: LastLaunch is null ? null : DateTimeOffset.FromUnixTimeMilliseconds((long)LastLaunch).UtcDateTime,
+             Problems: NotFoundOnDisk ? new List<Problem>() { Problem.NotFoundOnDisk } : [],
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
                  ["TaskbarIcon"] = [AppTaskbarIcon == default ? "" : AppTaskbarIcon.GetFullPath(),],

@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.ServiceProcess;
-using System.Text;
 using NexusMods.Paths;
 
 namespace GameCollector.Common;
@@ -155,6 +154,71 @@ public static class Utils
     }
 
     /// <summary>
+    /// Tries to convert the string representation of a number to its 16-bit unsigned integer equivalent.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>ushort value if <paramref name="s" /> was converted successfully; otherwise <langword>null</langword>.</returns>
+    public static ushort? ToNullableUShort(this string? s)
+    {
+        if (ushort.TryParse(s, out var result))
+            return result;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Tries to convert the string representation of a number to its 32-bit unsigned integer equivalent.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>uint value if <paramref name="s" /> was converted successfully; otherwise <langword>null</langword>.</returns>
+    public static uint? ToNullableUInt(this string? s)
+    {
+        if (uint.TryParse(s, out var result))
+            return result;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Tries to convert the string representation of a number to its 64-bit unsigned integer equivalent.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>ulong value if <paramref name="s" /> was converted successfully; otherwise <langword>null</langword>.</returns>
+    public static ulong? ToNullableULong(this string? s)
+    {
+        if (ulong.TryParse(s, out var result))
+            return result;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Tries to parse a string into a DateTime value using the CurrentCulture format.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>DateTime value if <paramref name="s" /> was successfully parsed; otherwise <langword>null</langword>.</returns>
+    public static DateTime? ToNullableDateTimeCurrent(this string? s)
+    {
+        if (DateTime.TryParse(s, CultureInfo.CurrentCulture, out var result))
+            return result;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Tries to parse a string into a DateTime value using the InvariantCulture format.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>DateTime value if <paramref name="s" /> was successfully parsed; otherwise <langword>null</langword>.</returns>
+    public static DateTime? ToNullableDateTimeInvariant(this string? s)
+    {
+        if (DateTime.TryParse(s, CultureInfo.InvariantCulture, out var result))
+            return result;
+
+        return null;
+    }
+
+    /// <summary>
     /// Returns the path to the best-guess of a game executable found recursively in a given path.
     /// </summary>
     /// <param name="path"></param>
@@ -212,12 +276,12 @@ public static class Utils
                         if (filename.Contains(nameSanitized, StringComparison.OrdinalIgnoreCase) ||
                             filename.Contains(nameSanitized.Replace(' ', '-'), StringComparison.OrdinalIgnoreCase) ||
                             filename.Contains(nameSanitized.Replace(' ', '_'), StringComparison.OrdinalIgnoreCase) ||
-                            filename.Contains(nameSanitized.Remove(' '), StringComparison.OrdinalIgnoreCase) ||
+                            filename.Contains(nameSanitized[..' '], StringComparison.OrdinalIgnoreCase) ||
                             (nameAlphanum is not null &&
                             (filename.Contains(nameAlphanum, StringComparison.OrdinalIgnoreCase) ||
                             filename.Contains(nameAlphanum.Replace(' ', '-'), StringComparison.OrdinalIgnoreCase) ||
                             filename.Contains(nameAlphanum.Replace(' ', '_'), StringComparison.OrdinalIgnoreCase) ||
-                            filename.Contains(nameAlphanum.Remove(' '), StringComparison.OrdinalIgnoreCase))))
+                            filename.Contains(nameAlphanum[..' '], StringComparison.OrdinalIgnoreCase))))
                         {
                             exe = exes[i];
                             break;

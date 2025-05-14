@@ -17,6 +17,7 @@ namespace GameCollector.StoreHandlers.IGClient;
 /// <param name="ExePath"></param>
 /// <param name="ExeArgs"></param>
 /// <param name="IsInstalled"></param>
+/// <param name="NotFoundOnDisk"></param>
 /// <param name="DescriptionShort"></param>
 /// <param name="DescriptionLong"></param>
 /// <param name="DevImage"></param>
@@ -33,6 +34,7 @@ public record IGClientGame(IGClientGameId IdKeyName,
                          AbsolutePath ExePath = new(),
                          string ExeArgs = "",
                          bool IsInstalled = true,
+                         bool NotFoundOnDisk = false,
                          string? DescriptionShort = null,
                          string? DescriptionLong = null,
                          string? DevImage = null,
@@ -50,6 +52,7 @@ public record IGClientGame(IGClientGameId IdKeyName,
              LaunchArgs: ExeArgs,
              Icon: ExePath,
              IsInstalled: IsInstalled,
+             Problems: NotFoundOnDisk ? new List<Problem>() { Problem.NotFoundOnDisk } : [],
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
                  ["Description"] = [DescriptionShort ?? "",],

@@ -123,7 +123,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                         }
                         if (settings?.GamesOnly == true && !isGame)
                         {
-                            games.Add(new ErrorMessage($"\"{title}\" is not a game (e.g., an application or software)"));
+                            games.Add(new ErrorMessage($"\"{title}\" is not a game (i.e., an application or software)"));
                             continue;
                         }
                     }

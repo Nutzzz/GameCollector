@@ -15,6 +15,7 @@ namespace GameCollector.StoreHandlers.Plarium;
 /// <param name="InstallationPath"></param>
 /// <param name="Launch"></param>
 /// <param name="LaunchArgs"></param>
+/// <param name="NotFoundOnDisk"></param>
 /// <param name="GameId"></param>
 /// <param name="GameName"></param>
 /// <param name="CompanyName"></param>
@@ -24,6 +25,7 @@ public record PlariumGame(PlariumGameId ProductId,
                       AbsolutePath InstallationPath,
                       AbsolutePath Launch = new(),
                       string LaunchArgs = "",
+                      bool NotFoundOnDisk = false,
                       string? GameId = null,
                       string? GameName = null,
                       string? CompanyName = null) :
@@ -33,6 +35,7 @@ public record PlariumGame(PlariumGameId ProductId,
              GamePath: InstallationPath,
              Launch: Launch,
              LaunchArgs: LaunchArgs,
+             Problems: NotFoundOnDisk ? new List<Problem>() { Problem.NotFoundOnDisk } : [],
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
                  ["GameId"] = [GameId ?? "",],

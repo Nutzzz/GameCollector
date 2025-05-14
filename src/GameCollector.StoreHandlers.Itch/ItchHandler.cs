@@ -112,7 +112,7 @@ public class ItchHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
         foreach (var game in games)
         {
             var id = game.Id;
-            if (id is null)
+            if (string.IsNullOrEmpty(id))
             {
                 yield return new ErrorMessage($"Value for \"id\" does not exist in table \"games\" in file {database}");
                 continue;
@@ -123,7 +123,7 @@ public class ItchHandler(IFileSystem fileSystem, IRegistry? registry = null) : A
             {
                 if (!type.Equals("game", StringComparison.OrdinalIgnoreCase))
                 {
-                    yield return new ErrorMessage($"\"{name}\" is not a game (e.g., an asset or tool)!");
+                    yield return new ErrorMessage($"\"{name}\" is not a game (i.e., an asset or tool)!");
                     continue;
                 }
             }

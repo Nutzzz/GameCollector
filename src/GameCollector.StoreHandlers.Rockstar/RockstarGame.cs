@@ -15,6 +15,7 @@ namespace GameCollector.StoreHandlers.Rockstar;
 /// <param name="Launch"></param>
 /// <param name="Uninstall"></param>
 /// <param name="UninstallArgs"></param>
+/// <param name="NotFoundOnDisk"></param>
 /// <param name="Publisher"></param>
 /// <param name="UrlInfoAbout"></param>
 /// <param name="HelpLink"></param>
@@ -25,6 +26,7 @@ public record RockstarGame(RockstarGameId Id,
                       AbsolutePath Launch = new(),
                       AbsolutePath Uninstall = new(),
                       string UninstallArgs = "",
+                      bool NotFoundOnDisk = false,
                       string Publisher = "",
                       string UrlInfoAbout = "",
                       string HelpLink = "") :
@@ -36,6 +38,7 @@ public record RockstarGame(RockstarGameId Id,
              Icon: Launch,
              Uninstall: Uninstall,
              UninstallArgs: UninstallArgs,
+             Problems: NotFoundOnDisk ? new List<Problem>() { Problem.NotFoundOnDisk } : [],
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
                  ["Publisher"] = [Publisher],

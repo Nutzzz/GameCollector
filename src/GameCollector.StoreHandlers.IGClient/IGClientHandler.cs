@@ -185,6 +185,7 @@ public class IGClientHandler(IFileSystem fileSystem, IRegistry? registry = null)
                     Path: path,
                     ExePath: launch,
                     ExeArgs: launchArgs,
+                    NotFoundOnDisk: launch == default,
                     DescriptionShort: target.GameData.DescriptionShort ?? "",
                     DescriptionLong: target.GameData.DescriptionLong ?? "",
                     DevImage: $"{ImgUrl}{target.ItemData.DevId}/products/{id}/prodmain/{target.ItemData.DevImage}",
