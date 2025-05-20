@@ -201,6 +201,11 @@ Initial release of GameCollector
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
 
+## [4.7.0](https://github.com/erri120/GameFinder/compare/v4.6.3...v4.7.0) - 2025-05-20
+
+- GOG: Change `BuildId` from `string` to `ulong`
+- Heroic: Update Json Serializer to allow parsing strings as numbers
+
 ## [4.6.3](https://github.com/erri120/GameFinder/compare/v4.6.2...v4.6.3) - 2025-04-29
 
 - Steam: add more logging

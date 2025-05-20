@@ -37,7 +37,7 @@ namespace GameCollector.StoreHandlers.GOG;
 public record GOGGame(GOGGameId Id,
                       string Name,
                       AbsolutePath Path,
-                      string BuildId,
+                      ulong BuildId,
                       AbsolutePath Launch = new(),
                       string LaunchParam = "",
                       string LaunchUrl = "",

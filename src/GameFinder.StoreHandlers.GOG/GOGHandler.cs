@@ -202,9 +202,10 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 return new ErrorMessage($"{subKey.GetName()} doesn't have a string value \"path\"");
             }
 
-            if (!subKey.TryGetString("buildId", out var buildId))
+            subKey.TryGetString("buildId", out var sBuildId);
+            if (!ulong.TryParse(sBuildId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var buildId))
             {
-                return new ErrorMessage($"{subKey.GetName()} doesn't have a string value \"buildId\"");
+                return new ErrorMessage($"The value \"buildId\" of {subKey.GetName()} doesn't exist or is not a number: \"{sBuildId}\"");
             }
 
             GOGGameId parentId = default;
