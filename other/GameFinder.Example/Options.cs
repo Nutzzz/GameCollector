@@ -23,6 +23,13 @@ public class Options
     [Option("bigfish", HelpText = "Search for Big Fish Game Manager games", Hidden = true, Group = "Handlers")]
     public bool BigFish { get; set; } = false;
 
+    [Option("choco", HelpText = "Search for Chocolatey packages", Hidden = true, Group = "Handlers")]
+    public bool Choco { get; set; } = false;
+
+    // alias for "choco"
+    [Option("chocolatey", HelpText = "Search for Chocolatey packages", Hidden = true, Group = "Handlers")]
+    public bool Chocolatey { get; set; } = false;
+
     [Option("dolphin", HelpText = "Search for Dolphin ROMs (path to .exe required)", MetaValue = "PATH", Group = "Handlers")]
     public string? Dolphin { get; set; }
 
@@ -39,6 +46,9 @@ public class Options
     // alias for "epic"
     [Option("egs", HelpText = "Search for Epic Games Launcher games", Hidden = true, Group = "Handlers")]
     public bool EGS { get; set; } = false;
+
+    [Option("flashpoint", HelpText = "Search for Flashpoint games", Hidden = true, Group = "Handlers")]
+    public bool Flashpoint { get; set; } = false;
 
     [Option("gamejolt", HelpText = "Search for Game Jolt Client games", Hidden = true, Group = "Handlers")]
     public bool GameJolt { get; set; } = false;
@@ -63,7 +73,7 @@ public class Options
     [Option("igclient", HelpText = "Search for Indiegala Client games", Hidden = true, Group = "Handlers")]
     public bool IGClient { get; set; } = false;
 
-    [Option("itch", HelpText = "Search for itch games", Hidden = true, Group = "Handlers")]
+    [Option("itch", HelpText = "Search for itch app games", Hidden = true, Group = "Handlers")]
     public bool Itch { get; set; } = false;
 
     [Option("legacy", HelpText = "Search for Legacy Games Launcher games", Hidden = true, Group = "Handlers")]
@@ -93,10 +103,13 @@ public class Options
     [Option("rockstar", HelpText = "Search for Rockstar Games Launcher games", Hidden = true, Group = "Handlers")]
     public bool Rockstar { get; set; } = false;
 
+    [Option("scoop", HelpText = "Search for Scoop packages", Hidden = true, Group = "Handlers")]
+    public bool Scoop { get; set; } = false;
+
     [Option("steam", HelpText = "Search for Steam games", Hidden = true, Group = "Handlers")]
     public bool Steam { get; set; } = false;
 
-    [Option("tgdb", HelpText = "Search for TheGamesDB.net games [EXPERIMENTAL]", Group = "Handlers")]
+    [Option("tgdb", HelpText = "Search for TheGamesDB.net games", Hidden = true, Group = "Handlers")]
     public bool TheGamesDB { get; set; } = false;
 
     [Option("ubisoft", HelpText = "Search for Ubisoft Connect games", Hidden = true, Group = "Handlers")]
@@ -112,6 +125,9 @@ public class Options
     // alias for "wargaming"
     [Option("wargamingnet", HelpText = "Search for Wargaming.Net Game Center games", Hidden = true, Group = "Handlers")]
     public bool WargamingNet { get; set; } = false;
+
+    [Option("winget", HelpText = "Search for Windows Package Manager packages", Hidden = true, Group = "Handlers")]
+    public bool Winget { get; set; } = false;
 
     [Option("xbox", HelpText = "Search for Xbox Games Pass games", Hidden = true, Group = "Handlers")]
     public bool Xbox { get; set; } = false;

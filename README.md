@@ -6,7 +6,7 @@
 
 .NET library for finding games. GameCollector expands on upstream GameFinder (which is primarily designed to support modding tools), by adding additional supported store launchers, emulators, and data sources, and includes additional information about each game (sufficient for a multi-store game launcher such as [GLC](https://github.com/Solaire/GLC)). This fork is indebted to erri120's hard work, but as [he is reticent](https://github.com/erri120/GameFinder/issues/49) to expand the scope of GameFinder, GameCollector continues with a different philosophy.
 
-The following launchers and emulators are supported:
+The following launchers, emulators, package managers, and data sources are supported:
 
 | handler | package |
 | -- | -- |
@@ -15,9 +15,11 @@ The following launchers and emulators are supported:
 | [Bethesda.net](#bethesdanet) | [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.BethNet?color=red&label=deprecated,upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.BethNet) |
 | Big Fish Game Manager | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.BigFish)](https://www.nuget.org/packages/GameCollector.StoreHandlers.BigFish) |
 | Blizzard Battle.net | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.BattleNet)](https://www.nuget.org/packages/GameCollector.StoreHandlers.BattleNet) |
+| Chocolatey | [![Nuget](https://img.shields.io/nuget/v/GameCollector.PkgHandlers.Choco)](https://www.nuget.org/packages/GameCollector.PkgHandlers.Choco) |
 | Dolphin Emulator | [![Nuget](https://img.shields.io/nuget/v/GameCollector.EmuHandlers.Dolphin)](https://www.nuget.org/packages/GameCollector.EmuHandlers.Dolphin) |
 | [EA app](#ea-app) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.EADesktop)](https://www.nuget.org/packages/GameCollector.StoreHandlers.EADesktop) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.EADesktop?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.EADesktop) |
 | [Epic Games Store](#epic-games-store) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.EGS)](https://www.nuget.org/packages/GameCollector.StoreHandlers.EGS) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.EGS?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.EGS) |
+| Flashpoint | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Flashpoint)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Flashpoint) |
 | Game Jolt Client | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.GameJolt)](https://www.nuget.org/packages/GameCollector.StoreHandlers.GameJolt) |
 | [GOG Galaxy](#gog-galaxy) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.GOG)](https://www.nuget.org/packages/GameCollector.StoreHandlers.GOG) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.GOG?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.GOG) |
 | Heroic (GOG) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.Launcher.Heroic)](https://www.nuget.org/packages/GameCollector.Launcher.Heroic) [![Nuget](https://img.shields.io/nuget/v/GameFinder.Launcher.Heroic?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.Launcher.Heroic)
@@ -33,10 +35,12 @@ The following launchers and emulators are supported:
 | Riot Client | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Riot)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Riot) |
 | RobotCache Client | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.RobotCache)](https://www.nuget.org/packages/GameCollector.StoreHandlers.RobotCache) |
 | Rockstar Games Launcher | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Rockstar)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Rockstar) |
+| Scoop | [![Nuget](https://img.shields.io/nuget/v/GameCollector.PkgHandlers.Scoop)](https://www.nuget.org/packages/GameCollector.PkgHandlers.Scoop) |
 | [Steam](#steam) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Steam)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Steam) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Steam?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Steam) |
 | TheGamesDB | [![Nuget](https://img.shields.io/nuget/v/GameCollector.DataHandlers.TheGamesDB)](https://www.nuget.org/packages/GameCollector.DataHandlers.TheGamesDB) |
 | Ubisoft Connect | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Ubisoft)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Ubisoft) |
 | Wargaming.net Game Center | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.WargamingNet)](https://www.nuget.org/packages/GameCollector.StoreHandlers.WargamingNet) |
+| Windows Package Manager | [![Nuget](https://img.shields.io/nuget/v/GameCollector.PkgHandlers.Winget)](https://www.nuget.org/packages/GameCollector.PkgHandlers.Winget) |
 | [Xbox Game Pass](#xbox-game-pass) | [![Nuget](https://img.shields.io/nuget/v/GameCollector.StoreHandlers.Xbox)](https://www.nuget.org/packages/GameCollector.StoreHandlers.Xbox) [![Nuget](https://img.shields.io/nuget/v/GameFinder.StoreHandlers.Xbox?color=red&label=upstream)](https://www.nuget.org/packages/GameFinder.StoreHandlers.Xbox) |
 
 If you are interested in understanding _how_ GameCollector/GameFinder finds these games, check [the upstream wiki](https://github.com/erri120/GameFinder/wiki) for more information (descriptions of the added handlers should eventually be added to a wiki here).
@@ -56,20 +60,28 @@ The [example project](./other/GameFinder.Example) uses every available store han
 - Known issues: See [GameCollector issues here](https://github.com/Nutzzz/GameCollector/issues) or [upstream GameFinder issues here](https://github.com/erri120/GameFinder/issues). Please do not submit bugs/requests for GameCollector on GameFinder's GitHub.
 - DLCs/clones: When an entry is detected as a DLC addon (or a clone in the MAME handler), the `string? GameData.BaseGame` field is set to the ID of the main game (or sometimes the string "False" when the relationship can't be determined). To hide DLCs from the consumer application, use `FindAllGames(Settings)` where `bool Settings.BaseOnly = true`, or do not use entries where `string? GameData.BaseGame != null`.
 - Owned not-installed games: Some handlers can find owned not-installed games. To support this feature for Steam games, [see note below](#steam). To hide not-installed games, use `FindAllGames(Settings)` where `bool Settings.InstalledOnly = true`, or do not use entries where `bool GameData.IsInstalled == false`.
-- Unowned games: A few handlers can find all entries in the launcher database. To show only owned games, use `FindAllGames(Settings)` where `bool Settings.OwnedOnly = true`, or do not use entries where `bool GameData.IsOwned == false`. Note that all games from the TheGamesDB handler will be marked as unowned.
-- Non-game items: Some handlers can find non-game (e.g., applications) items. To show only games, use `FindAllGames(Settings)` where `bool Settings.GamesOnly = true`, or parse the item's `List<string> GameData.Genres` for the appropriate string values.
-
-### Dolphin/MAME
-
-These handlers both require you pass an AbsolutePath to the emulator executable when instantiating the handler class, e.g., `new MAMEHandler(fileSystem, mamePath)`.
+- Unowned games: A few handlers can find *all* entries in the launcher database. To show only owned games, use `FindAllGames(Settings)` where `bool Settings.OwnedOnly = true`, or do not use entries where `bool GameData.IsOwned == false`.
+- Non-store games: Some handlers find items that are likely to also be found by another handler, i.e., Steam games by Origin or Ubisoft Connect, or installs that are recognized by a package handler but weren't actually installed using it. To show only store games, use `FindAllGames(Settings)` where `bool Settings.StoreOnly = true`, or do not use entries where `bool GameData.IsStore == false`.
+- Non-game items: Some handlers can find non-game (e.g., applications) items. To show only games, use `FindAllGames(Settings)` where `bool Settings.GamesOnly = true`, or parse the entry's `List<string> GameData.Genres` for the appropriate string values.
+- Non-working games: Some handlers can find items that aren't yet playable. To show only working games, use `FindAllGames(Settings)` where `bool Settings.PlayableOnly = true` or do not use entries where `IList<Problem> GameData.Problems` contains `Problem.Unplayable`.
+- Imperfect games: Some handlers can find items that are playable, but are problematic in some way. To show only complete games, use `FindAllGames(Settings)` where `bool Settings.CompleteOnly = true` or do not use entries where `IList<Problem> GameData.Problems` contains `Problem.Incomplete`.
+- Bootlegs/hacks: Some handlers include unofficial releases. To show only official games, use `FindAllGames(Settings)` where `bool OfficialOnly = true`.
 
 ### Oculus
 
 If the Oculus service is running (as it does even when the program is not open), the database is usually locked and connot be read. The handler attempts to stop the service, but this only works if the consumer application is running as administrator.
 
+### Chocolatey/Scoop/Windows Package Manager
+
+Note that many non-game items are likely regardless of `Settings.Games, and unless `Settings.StoreOnly`
+
+### Dolphin/MAME
+
+These handlers both require you pass an AbsolutePath to the emulator executable when instantiating the handler class, e.g., `new MAMEHandler(fileSystem, mamePath)`.
+
 ### TheGamesDB
 
-This is an *experimental* handler, with the idea of assisting the supplementation of information for prior found games.  It only searches for PC games.  However, because it relies on title match it will certainly result in both false-positives and false-negatives.
+This is a handler designed to supplement the information for prior found games. It only searches for PC games. Note that since it relies on a title match it will certainly result in both false-positives and false-negatives. Note that all games from data handlers will be `bool GameData.IsOwned == false`
 
 ## Differences from Upstream
 
@@ -103,6 +115,14 @@ The TGame implementations of GameCollector's handlers inherit a generic GameData
 
 The Metadata dictionary may include (depending on available information) fields like: "ReleaseDate", "Description", "Developers", "Publishers", "Genres", "ImageUrl", etc.
 
+### Supported Package Managers
+
+This is a new category of handler for GameCollector. It is Windows-only for now.
+
+- Choco
+- Scoop
+- Winget
+
 ### Supported Emulators
 
 This is a new category of handler for GameCollector. They are Windows-only for now.
@@ -112,18 +132,19 @@ This is a new category of handler for GameCollector. They are Windows-only for n
 
 ### Supported Data Sources
 
-This is another new category of handler for GameCollector.
+This is a new category of handler for GameCollector.
 
 - TheGamesDB.net
 
 ### New Supported Launchers
 
-The following 17 handlers have been added for GameCollector. They are all Windows-only for now:
+In addition to the upstream handlers, the following 18 store handlers have been added for GameCollector. They are all Windows-only for now:
 
 - Amazon Games
 - Arc
 - Big Fish Game Manager
 - Blizzard Battle.net
+- Flashpoint
 - Game Jolt
 - Humble App
 - Indiegala IGClient

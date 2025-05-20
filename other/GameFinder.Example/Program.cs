@@ -24,6 +24,7 @@ using GameCollector.StoreHandlers.Amazon;
 using GameCollector.StoreHandlers.Arc;
 using GameCollector.StoreHandlers.BattleNet;
 using GameCollector.StoreHandlers.BigFish;
+using GameCollector.StoreHandlers.Flashpoint;
 using GameCollector.StoreHandlers.GameJolt;
 using GameCollector.StoreHandlers.Humble;
 using GameCollector.StoreHandlers.IGClient;
@@ -37,6 +38,9 @@ using GameCollector.StoreHandlers.RobotCache;
 using GameCollector.StoreHandlers.Rockstar;
 using GameCollector.StoreHandlers.Ubisoft;
 using GameCollector.StoreHandlers.WargamingNet;
+using GameCollector.PkgHandlers.Choco;
+using GameCollector.PkgHandlers.Scoop;
+using GameCollector.PkgHandlers.Winget;
 using GameCollector.EmuHandlers.Dolphin;
 using GameCollector.EmuHandlers.MAME;
 using GameCollector.DataHandlers.TheGamesDB;
@@ -123,17 +127,19 @@ public static class Program
             options.Arc = true;
             options.BattleNet = true;
             options.BigFish = true;
-            //options.Dolphin ??= "";
+            options.Choco = true;
+            //options.Dolphin ??= "";       // needs path
             options.EA = true;
             options.Epic = true;
+            options.Flashpoint = true;
             options.GameJolt = true;
             options.GOG = true;
-            options.Heroic = true;
+            options.Heroic = OperatingSystem.IsLinux();
             options.Humble = true;
             options.IG = true;
             options.Itch = true;
             options.Legacy = true;
-            //options.MAME ??= "";
+            //options.MAME ??= "";          // needs path
             options.Oculus = true;
             options.Origin = true;
             options.Paradox = true;
@@ -141,11 +147,15 @@ public static class Program
             options.Riot = true;
             options.RobotCache = true;
             options.Rockstar = true;
+            options.Scoop = true;
             options.Steam = true;
             //options.TheGamesDB = true;
             options.Ubisoft = true;
             options.Wargaming = true;
-            options.Xbox = true;
+            options.Winget = OperatingSystem.IsWindows();
+            options.Xbox = OperatingSystem.IsWindows();
+            options.Wine = OperatingSystem.IsLinux();
+            options.Bottles = OperatingSystem.IsLinux();
         }
 
         if (OperatingSystem.IsWindows())
@@ -176,6 +186,8 @@ public static class Program
             if (options.Arc) tasks.Add(Task.Run(() => RunArcHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.BattleNet || options.Blizzard) tasks.Add(Task.Run(() => RunBattleNetHandler(settings, realFileSystem), cancelToken));
             if (options.BigFish) tasks.Add(Task.Run(() => RunBigFishHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+            if (options.Choco || options.Chocolatey) tasks.Add(Task.Run(() => RunChocoHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+            if (options.Flashpoint) tasks.Add(Task.Run(() => RunFlashpointHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.GameJolt) tasks.Add(Task.Run(() => RunGameJoltHandler(settings, realFileSystem), cancelToken));
             if (options.Humble) tasks.Add(Task.Run(() => RunHumbleHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.IG || options.Indiegala || options.IGClient) tasks.Add(Task.Run(() => RunIGClientHandler(settings, realFileSystem), cancelToken));
@@ -187,14 +199,16 @@ public static class Program
             if (options.Riot) tasks.Add(Task.Run(() => RunRiotHandler(settings, realFileSystem), cancelToken));
             if (options.RobotCache) tasks.Add(Task.Run(() => RunRobotCacheHandler(settings, realFileSystem), cancelToken));
             if (options.Rockstar) tasks.Add(Task.Run(() => RunRockstarHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+            if (options.Scoop) tasks.Add(Task.Run(() => RunScoopHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Ubisoft || options.Uplay) tasks.Add(Task.Run(() => RunUbisoftHandler(settings, windowsRegistry, realFileSystem), cancelToken));
             if (options.Wargaming || options.WargamingNet) tasks.Add(Task.Run(() => RunWargamingNetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
+            if (options.Winget) tasks.Add(Task.Run(() => RunWingetHandler(settings, windowsRegistry, realFileSystem), cancelToken));
 
             if (options.Dolphin is not null)
             {
                 tasks.Add(Task.Run(() =>
                 {
-                    if (Path.IsPathRooted(options.Dolphin))
+                    if (Path.IsPathFullyQualified(options.Dolphin))
                     {
                         var path = realFileSystem.FromUnsanitizedFullPath(options.Dolphin);
                         RunDolphinHandler(settings, windowsRegistry, realFileSystem, path);
@@ -208,7 +222,7 @@ public static class Program
             {
                 tasks.Add(Task.Run(() =>
                 {
-                    if (Path.IsPathRooted(options.MAME))
+                    if (Path.IsPathFullyQualified(options.MAME))
                     {
                         var path = realFileSystem.FromUnsanitizedFullPath(options.MAME);
                         RunMAMEHandler(settings, realFileSystem, path);
@@ -367,6 +381,20 @@ public static class Program
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
+    private static void RunChocoHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
+    {
+        var logger = _provider.CreateLogger(nameof(ChocoHandler));
+        var handler = new ChocoHandler(registry, fileSystem, logger); //, logger);
+        LogGamesAndErrors(handler.FindAllGames(settings), logger);
+    }
+
+    private static void RunFlashpointHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
+    {
+        var logger = _provider.CreateLogger(nameof(FlashpointHandler));
+        var handler = new FlashpointHandler(registry, fileSystem);
+        LogGamesAndErrors(handler.FindAllGames(settings), logger);
+    }
+
     private static void RunGameJoltHandler(Settings settings, IFileSystem fileSystem)
     {
         var logger = _provider.CreateLogger(nameof(GameJoltHandler));
@@ -444,6 +472,13 @@ public static class Program
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 
+    private static void RunScoopHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
+    {
+        var logger = _provider.CreateLogger(nameof(ScoopHandler));
+        var handler = new ScoopHandler(registry, fileSystem, logger); //, logger);
+        LogGamesAndErrors(handler.FindAllGames(settings), logger);
+    }
+
     private static void RunUbisoftHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
     {
         var logger = _provider.CreateLogger(nameof(UbisoftHandler));
@@ -455,6 +490,13 @@ public static class Program
     {
         var logger = _provider.CreateLogger(nameof(WargamingNetHandler));
         var handler = new WargamingNetHandler(registry, fileSystem);
+        LogGamesAndErrors(handler.FindAllGames(settings), logger);
+    }
+
+    private static void RunWingetHandler(Settings settings, IRegistry registry, IFileSystem fileSystem)
+    {
+        var logger = _provider.CreateLogger(nameof(WingetHandler));
+        var handler = new WingetHandler(registry, fileSystem, logger); //, logger);
         LogGamesAndErrors(handler.FindAllGames(settings), logger);
     }
 

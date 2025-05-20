@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [Semantic Versioning](https://semver.org), for the moment this project simply uses GameFinder's version number and adds a new digit to the end. Where normally a fourth digit would be used for hotfixes or pre-release versions, because GameCollector is still in its infancy, breaking changes may occur between point releases. Because the scope of this project is so much larger than upstream, eventually a different versioning scheme will need to be used.
 
-## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.6.3.1...HEAD)
+## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.7.0.1...HEAD)
 
 **TODO**:
 
@@ -16,12 +16,25 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 ## [Released](https://github.com/Nutzzz/GameCollector/releases)
 
-## [4.6.3-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.6.3.1) - 2025-04-29
+## [4.7.0-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.7.0.1) - 2025-05-21
 
 ## Added
 
-- Add EXPERIMENTAL TheGamesDb [DataHandlers](https://github.com/Nutzzz/GameCollector/pull/13) to download metadata and find available media from online sources
-- Add EXPERIMENTAL WinGet, Chocolatey, and Scoop [PkgHandlers](https://github.com/Nutzzz/GameCollector/pull/40) to find installed software and available free games
+- Add TheGamesDb as a [DataHandler](https://github.com/Nutzzz/GameCollector/pull/13) to download metadata and find available media from online sources
+- Add new [PkgHandlers](https://github.com/Nutzzz/GameCollector/pull/40) to find installed software and available free games
+  - Chocolatey
+  - Scoop
+  - Windows Package Manager (winget)
+- Add new StoreHandler [Flashpoint launcher](https://github.com/Nutzzz/GameCollector/issues/47)
+- Added `Settings.StoreOnly` to filter out non-store games, e.g.:
+  - PkgHandler apps installed via other sources
+  - Steam games in Origin or Ubisoft Connect
+  - Non-store Humble games
+- Added `Settings.PlayableOnly` to filter out non-working games for MAME and Flashpoint
+- Added `Settings.CompleteOnly` to filter out imperfect games for MAME and Flashpoint
+- Added `Settings.OfficialOnly` to filter out bootlegs and hacks for MAME and Flashpoint
+- Add `GameData.UpdateDate`
+- Add `Problem.InstallFailed`, `Problem.VersionLocked`, `Problem.Incomplete`, `Problem.Unofficial`, and `Problem.Unplayable`
 - Upstream: Heroic (GOG): Support Linux native games
 - Upstream: Heroic (GOG): Include environment variables in the output
 - Upstream: Steam: add more logging
@@ -29,6 +42,8 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 ### Changed
 
 - Upgrade to .NET 9 and C# 12
+- Steam: Implement UpdateDate
+- Humble, Origin, Ubisoft: Implement StoreOnly flag
 - Update dependencies
 - Code simplifications
 
@@ -181,11 +196,11 @@ Initial release of GameCollector
 
 ### Added
 
-- Added a generic `record GameData` to collect data for all handlers
+- Add a generic `record GameData` to collect data for all handlers
 - The `IGame` implementations from GameFinder are subclasses of `GameData`. This should hopefully make merging with upstream easier.
-- Added emulators:
+- Add new EmuHandlers:
   - Dolphin, MAME
-- Added additional store launchers:
+- Add additional StoreHandlers:
   - Amazon, Arc, Battle.net, Big Fish, Game Jolt, Humble, Indiegala, itch, Legacy, Oculus, Paradox, Plarium, Riot, RobotCache, Rockstar, Ubisoft, Wargaming.net
 - Add `FindClient()` to get path to store client executable.
 - EADesktop handler now attempts to get a proper game title from the Registry.

@@ -64,6 +64,11 @@ public enum Handler
     [Description("GameCollector.StoreHandlers.BigFish")]
     StoreHandler_BigFish,
     /// <summary>
+    /// Flashpoint Launcher store handler
+    /// </summary>
+    [Description("GameCollector.StoreHandlers.Flashpoint")]
+    StoreHandler_Flashpoint,
+    /// <summary>
     /// Game Jolt Client store handler
     /// </summary>
     [Description("GameCollector.StoreHandlers.GameJolt")]
@@ -133,6 +138,21 @@ public enum Handler
     /// </summary>
     [Description("GameCollector.Launcher.Heroic")]
     Launcher_Heroic,
+    /// <summary>
+    /// Chocolatey package handler
+    /// </summary>
+    [Description("GameCollector.PkgHandlers.Choco")]
+    PkgHandler_Choco,
+    /// <summary>
+    /// Scoop package handler
+    /// </summary>
+    [Description("GameCollector.PkgHandlers.Scoop")]
+    PkgHandler_Scoop,
+    /// <summary>
+    /// Windows Package Manager package handler
+    /// </summary>
+    [Description("GameCollector.PkgHandlers.Winget")]
+    PkgHandler_Winget,
     /// <summary>
     /// Dolphin Emulator emulation handler
     /// </summary>

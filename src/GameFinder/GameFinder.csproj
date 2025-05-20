@@ -34,6 +34,7 @@
         <ProjectReference Include="..\GameCollector.StoreHandlers.Arc\GameCollector.StoreHandlers.Arc.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.BattleNet\GameCollector.StoreHandlers.BattleNet.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.BigFish\GameCollector.StoreHandlers.BigFish.csproj" />
+        <ProjectReference Include="..\GameCollector.StoreHandlers.Flashpoint\GameCollector.StoreHandlers.Flashpoint.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.GameJolt\GameCollector.StoreHandlers.GameJolt.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.Humble\GameCollector.StoreHandlers.Humble.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.IGClient\GameCollector.StoreHandlers.IGClient.csproj" />
@@ -46,6 +47,9 @@
         <ProjectReference Include="..\GameCollector.StoreHandlers.Rockstar\GameCollector.StoreHandlers.Rockstar.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.Ubisoft\GameCollector.StoreHandlers.Ubisoft.csproj" />
         <ProjectReference Include="..\GameCollector.StoreHandlers.WargamingNet\GameCollector.StoreHandlers.WargamingNet.csproj" />
+        <ProjectReference Include="..\GameCollector.PkgHandlers.Choco\GameCollector.PkgHandlers.Choco.csproj" />
+        <ProjectReference Include="..\GameCollector.PkgHandlers.Scoop\GameCollector.PkgHandlers.Scoop.csproj" />
+        <ProjectReference Include="..\GameCollector.PkgHandlers.Winget\GameCollector.PkgHandlers.Winget.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.Dolphin\GameCollector.EmuHandlers.Dolphin.csproj" />
         <ProjectReference Include="..\GameCollector.EmuHandlers.MAME\GameCollector.EmuHandlers.MAME.csproj" />
         <ProjectReference Include="..\GameCollector.DataHandlers.TheGamesDb\GameCollector.DataHandlers.TheGamesDB.csproj" />

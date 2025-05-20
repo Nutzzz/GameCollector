@@ -82,5 +82,5 @@ public record GOGGame(GOGGameId Id,
                  ["ImageUrl"] = [BoxArtUrl],
                  ["ImageWideUrl"] = [LogoUrl],
                  ["IconUrl"] = [IconUrl],
-                 ["BuildId"] = [BuildId],
+                 ["BuildId"] = [BuildId.ToString()],
              });
