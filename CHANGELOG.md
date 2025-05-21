@@ -212,9 +212,17 @@ Initial release of GameCollector
 
 # Upstream Changelog
 
-## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.6.3...HEAD)
+## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.7.2...HEAD)
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
+
+## [4.7.2](https://github.com/erri120/GameFinder/compare/v4.7.1...v4.7.2) - 2025-05-21
+
+- Update dependencies
+
+## [4.7.1](https://github.com/erri120/GameFinder/compare/v4.7.0...v4.7.1) - 2025-05-21
+
+- Update dependencies
 
 ## [4.7.0](https://github.com/erri120/GameFinder/compare/v4.6.3...v4.7.0) - 2025-05-20
 
