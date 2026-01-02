@@ -45,6 +45,7 @@ using GameCollector.EmuHandlers.Dolphin;
 using GameCollector.EmuHandlers.MAME;
 using GameCollector.DataHandlers.TheGamesDB;
 using Microsoft.Extensions.Logging;
+using Microsoft.PowerShell.Commands;
 using NexusMods.Paths;
 using NLog;
 using NLog.Config;

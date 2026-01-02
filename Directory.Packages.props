@@ -21,14 +21,21 @@
     <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Management.Deployment" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.PowerShell.Commands.Diagnostics" Version ="7.4.10" />
+    <PackageVersion Include="Microsoft.PowerShell.Commands.Management" Version ="7.4.10" />
+    <PackageVersion Include="Microsoft.PowerShell.Commands.Utility" Version ="7.4.10" />
+    <PackageVersion Include="Microsoft.PowerShell.ConsoleHost" Version ="7.4.10" />
     <PackageVersion Include="Microsoft.Windows.CsWinRT" Version="2.1.3" />
     <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.106" />
     <PackageVersion Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.8.1911" GeneratePathProperty="true" IncludeAssets="none" />
     <PackageVersion Include="Microsoft.WindowsPackageManager.InProcCom" Version="1.8.1911" GeneratePathProperty="true" IncludeAssets="none" />
+    <PackageVersion Include="Microsoft.WSMan.Management" Version ="7.4.10" />
     <PackageVersion Include="protobuf-net" Version="3.2.52" />
     <PackageVersion Include="SteamWebAPI2" Version="4.4.1" />
     <PackageVersion Include="System.Data.SQLite" Version="1.0.119" />
     <PackageVersion Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageVersion Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
+    <PackageVersion Include="System.Management.Automation" Version="7.4.10" />
     <PackageVersion Include="System.ServiceProcess.ServiceController" Version="9.0.5" />
     <PackageVersion Include="System.Text.Json" Version="9.0.4" />
     <PackageVersion Include="TheGamesDBApiWrapper" Version="3.0.0" />
