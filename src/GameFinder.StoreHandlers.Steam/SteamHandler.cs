@@ -68,11 +68,8 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
     /// <inheritdoc/>
     public override AbsolutePath FindClient()
     {
-        var steamPathResult = SteamLocationFinder.TryFindSteam(_fileSystem, _registry);
-        if (!steamPathResult.IsFailed)
-        {
-            return steamPathResult.Value;
-        }
+        if (SteamLocationFinder.TryFindSteam(_fileSystem, _registry, _logger, out var steamDir))
+            return steamDir;
 
         return new();
     }
@@ -96,7 +93,6 @@ public partial class SteamHandler : AHandler<SteamGame, AppId>
         if (!SteamLocationFinder.TryFindSteam(_fileSystem, _registry, _logger, out var steamPath))
             return allGames;
 
-        var steamPath = steamPathResult.Value;
         var libraryFoldersFilePath = SteamLocationFinder.GetLibraryFoldersFilePath(steamPath);
 
         var libraryFoldersResult = LibraryFoldersManifestParser.ParseManifestFile(libraryFoldersFilePath);

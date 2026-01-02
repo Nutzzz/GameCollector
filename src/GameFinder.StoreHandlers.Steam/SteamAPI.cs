@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentResults;
 using GameFinder.Common;
 using GameFinder.RegistryUtils;
-using GameCollector.StoreHandlers.Steam.Models;
-using GameCollector.StoreHandlers.Steam.Models.ValueTypes;
 using GameCollector.StoreHandlers.Steam.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NexusMods.Paths;
 using OneOf;
 using Steam.Models.SteamCommunity;
@@ -36,11 +35,13 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
     /// For tests either use <see cref="InMemoryRegistry"/>, a custom implementation or just a mock
     /// of the interface.
     /// </param>
+    /// <param name="logger">Logger.</param>
     /// <param name="apiKey"></param>
-    public SteamHandler(IFileSystem fileSystem, IRegistry? registry = null, string? apiKey = null)
+    public SteamHandler(IFileSystem fileSystem, IRegistry? registry = null, ILogger<SteamHandler>? logger = null, string? apiKey = null)
     {
         _fileSystem = fileSystem;
         _registry = registry;
+        _logger = logger ?? NullLogger<SteamHandler>.Instance;
         _apiKey = apiKey;
     }
 
@@ -149,13 +150,12 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
         {
             KVValue autoUser = "";
 
-            var steamPathResult = SteamLocationFinder.FindSteam(_fileSystem, _registry);
-            if (steamPathResult.IsFailed)
+            if (!SteamLocationFinder.TryFindSteam(_fileSystem, _registry, _logger, out var steamPathResult))
             {
                 return userList;
             }
 
-            var steamPath = steamPathResult.Value;
+            var steamPath = steamPathResult;
             var libraryFoldersFilePath = SteamLocationFinder.GetLibraryFoldersFilePath(steamPath);
 
             var libraryFoldersResult = LibraryFoldersManifestParser.ParseManifestFile(libraryFoldersFilePath);
@@ -173,13 +173,12 @@ public partial class SteamHandler : AHandler<SteamGame, Models.ValueTypes.AppId>
             var loginUsersFile = defaultSteamDirs.Select(GetLoginUsersFile).FirstOrDefault(_fileSystem.FileExists);
             if (_registry is not null)
             {
-                var steamDir = SteamLocationFinder.GetSteamPathFromRegistry(_fileSystem, _registry);
-                if (steamDir != default)
+                if (SteamLocationFinder.TryGetSteamPathFromRegistry(_fileSystem, _registry, _logger, out var steamDir))
                 {
                     if (appDataFile == default)
-                        appDataFile = GetAppDataFile(steamDir.ValueOrDefault);
+                        appDataFile = GetAppDataFile(steamDir);
                     if (loginUsersFile == default)
-                        loginUsersFile = GetLoginUsersFile(steamDir.ValueOrDefault);
+                        loginUsersFile = GetLoginUsersFile(steamDir);
                 }
             }
 

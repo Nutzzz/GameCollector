@@ -329,7 +329,7 @@ public static class Program
         string? steamAPI = null)
     {
         var logger = _provider.CreateLogger(nameof(SteamHandler));
-        var handler = new SteamHandler(fileSystem, registry, steamAPI, _loggerFactory.CreateLogger<SteamHandler>());
+        var handler = new SteamHandler(fileSystem, registry, _loggerFactory.CreateLogger<SteamHandler>(), steamAPI);
         LogGamesAndErrors(handler.FindAllGames(settings), logger, game =>
         {
             if (!OperatingSystem.IsLinux()) return;

@@ -13,7 +13,7 @@ public class SteamHandlerTests
     {
         var fs = new InMemoryFileSystem();
 
-        var steamHandler = new SteamHandler(fs, registry: null);
+        var steamHandler = new SteamHandler(fs, registry: null, logger: null);
         steamHandler.FindAllGames().Should().BeEmpty();
 
         var steamPath = SteamLocationFinder.GetDefaultSteamInstallationPaths(fs).First();
