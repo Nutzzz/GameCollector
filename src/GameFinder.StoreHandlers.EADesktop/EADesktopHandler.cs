@@ -41,7 +41,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
     /// The supported schema version of this handler. You can change the schema policy with
     /// <see cref="SchemaPolicy"/>.
     /// </summary>
-    public const int SupportedSchemaVersion = 21;
+    public const int SupportedSchemaVersion = 24;
 
     /// <summary>
     /// Policy to use when the schema version does not match <see cref="SupportedSchemaVersion"/>.
@@ -249,7 +249,11 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
     internal static string ParseInstallerDataFile(IFileSystem fileSystem, string baseInstallPath, out IList<string> contentIds)
     {
         var title = "";
-        contentIds = new List<string>();
+        contentIds = [];
+
+        // Skip processing if baseInstallPath is not rooted
+        if (string.IsNullOrEmpty(baseInstallPath) || !Path.IsPathRooted(baseInstallPath))
+            return title;
 
         var dataFile = fileSystem.FromUnsanitizedFullPath(Path.Combine(baseInstallPath, "__Installer", "installerdata.xml"));
         if (dataFile.FileExists)
@@ -363,7 +367,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
         else if (Path.IsPathRooted(baseInstallPath))
             isInstalled = true;
 
-        if (installCheck.StartsWith('['))
+        if (installCheck.StartsWith('[') && Path.IsPathRooted(baseInstallPath))
         {
             var j = installCheck.IndexOf(']', StringComparison.Ordinal);
             if (j > 1)
@@ -393,7 +397,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
                 if (!executable.FileExists)
                     isInstalled = false;
             }
-            else if (!string.IsNullOrEmpty(executableCheck) && executableCheck.StartsWith('['))
+            else if (!string.IsNullOrEmpty(executableCheck) && executableCheck.StartsWith('[') && Path.IsPathRooted(baseInstallPath))
             {
                 var j = executableCheck.IndexOf(']', StringComparison.Ordinal);
 
