@@ -29,19 +29,20 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 - Upstream: GOG: parse parent game ID for DLCs
 - Upstream: Heroic: parse installed DLCs
 - Upstream: Heroic: Support Linux native games
-- Upstream: Heroic: Include environment variables in the output
-- Upstream: Steam: add more logging
 
 ### Changed
 
-- Upgrade to .NET 9 and C# 12
+- Upgrade to .NET 10 and C# 12
 - Update dependencies
 - Upstream: GOG: Better ID parsing
 - Upstream: GOG: Change `BuildId` from `string` to `ulong`
 - Upstream: Heroic: Update Json Serializer to allow parsing strings as numbers
+- Upstream: Heroic: Include environment variables in the output
+- Upstream: Steam: add more logging
 
 ### Fixed
 
+- EA: Fixed (thanks to [Ismaël Moret](https://github.com/BellezaEmporium)!)
 - Upstream: Heroic: fix parser exception when `buildID` is empty
 - Upstream: Steam: Fix escape sequences in local user config files
 
