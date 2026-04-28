@@ -9,6 +9,7 @@ public static class Decryption
 {
     private const string AllUsersGenericId = "allUsersGenericId";
     private const string IS = "IS";
+    private const string Salt = "l)%ge7fomILhfj*Qfi+,";
 
     private static readonly byte[] preComputedIV =
     {
@@ -18,10 +19,7 @@ public static class Decryption
 
     public static byte[] CreateDecryptionKey(IHardwareInfoProvider hardwareInfoProvider)
     {
-        var hardwareString = HardwareInformation.GenerateHardwareString(hardwareInfoProvider);
-
-        var hardwareHash = Hashing.CalculateSHA1Hash(hardwareString);
-        var hashInput = AllUsersGenericId + IS + hardwareHash;
+        var hashInput = AllUsersGenericId + IS + Salt;
         var key = Hashing.CalculateSHA3_256Hash(hashInput);
 
         return key;
