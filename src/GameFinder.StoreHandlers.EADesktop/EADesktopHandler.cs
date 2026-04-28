@@ -41,7 +41,7 @@ public class EADesktopHandler : AHandler<EADesktopGame, EADesktopGameId>
     /// The supported schema version of this handler. You can change the schema policy with
     /// <see cref="SchemaPolicy"/>.
     /// </summary>
-    public const int SupportedSchemaVersion = 21;
+    public const int SupportedSchemaVersion = 24;
 
     /// <summary>
     /// Policy to use when the schema version does not match <see cref="SupportedSchemaVersion"/>.
