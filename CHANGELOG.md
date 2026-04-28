@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [Semantic Versioning](https://semver.org), for the moment this project simply uses GameFinder's version number and adds a new digit to the end. Where normally a fourth digit would be used for hotfixes or pre-release versions, because GameCollector is still in its infancy, breaking changes may occur between point releases. Because the scope of this project is so much larger than upstream, eventually a different versioning scheme will need to be used.
 
-## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.7.2.1...HEAD)
+## [Unreleased](https://github.com/Nutzzz/GameCollector/compare/v4.9.0.1...HEAD)
 
 **TODO**:
 
@@ -21,30 +21,35 @@ Though upstream [GameFinder](https://github.com/erri120/GameFinder) adheres to [
 
 ## [Released](https://github.com/Nutzzz/GameCollector/releases)
 
-## [4.7.2-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.7.2.1) - 2026-01-07
+## [4.9.0-1](https://github.com/Nutzzz/GameCollector/compare/v4.4.0.1...v4.9.0.1) - 2026-04-28
 
 ## Added
 
-- Upstream: Heroic (GOG): Support Linux native games
-- Upstream: Heroic (GOG): Include environment variables in the output
+- Upstream: EGS: Add ManifestId
+- Upstream: GOG: parse parent game ID for DLCs
+- Upstream: Heroic: parse installed DLCs
+- Upstream: Heroic: Support Linux native games
+- Upstream: Heroic: Include environment variables in the output
 - Upstream: Steam: add more logging
 
 ### Changed
 
 - Upgrade to .NET 9 and C# 12
 - Update dependencies
+- Upstream: GOG: Better ID parsing
 - Upstream: GOG: Change `BuildId` from `string` to `ulong`
 - Upstream: Heroic: Update Json Serializer to allow parsing strings as numbers
 
 ### Fixed
 
+- Upstream: Heroic: fix parser exception when `buildID` is empty
 - Upstream: Steam: Fix escape sequences in local user config files
 
 ## [4.4.0-1](https://github.com/Nutzzz/GameCollector/compare/v4.3.2.1...v4.4.0.1) - 2024-12-11
 
 ### Added
 
-- Upstream: GOG & Heroic (GOG): Add `BuildId`
+- Upstream: GOG & Heroic: Add `BuildId`
 - Steam: Check for empty manifest file
 
 ### Fixed
@@ -201,7 +206,7 @@ Initial release of GameCollector
 
 # Upstream Changelog
 
-## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.7.3...HEAD)
+## [Unreleased](https://github.com/erri120/GameFinder/compare/v4.9.0...HEAD)
 
 ## [Released](https://github.com/erri120/GameFinder/releases)
 
