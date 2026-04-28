@@ -15,9 +15,6 @@ using OneOf;
 
 namespace GameCollector.StoreHandlers.EGS;
 
-[UsedImplicitly]
-internal record ManifestFile(string CatalogItemId, string DisplayName, string InstallLocation, string ManifestHash, string MainGameCatalogItemId);
-
 /// <summary>
 /// Handler for finding games installed with the Epic Games Store.
 /// </summary>
@@ -99,7 +96,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<EGSGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        List<OneOf<EGSGame, ErrorMessage>> allGames = new();
+        List<OneOf<EGSGame, ErrorMessage>> allGames = [];
         var manifestDir = GetManifestDir();
         if (!_fileSystem.DirectoryExists(manifestDir))
         {
@@ -149,7 +146,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             yield return errorMessage.AsT1;
         }
         */
-        Dictionary<EGSGameId, OneOf<EGSGame, ErrorMessage>> installedDict = new();
+        Dictionary<EGSGameId, OneOf<EGSGame, ErrorMessage>> installedDict = [];
         foreach (var itemFile in itemFiles)
         {
             var game = DeserializeGame(itemFile, FormatPolicy, settings?.BaseOnly);
@@ -223,6 +220,8 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                 return new ErrorMessage($"\"{title}\" [{id}] Manifest {itemFile.GetFullPath()} does not have a value \"InstallLocation\"");
             }
 
+            var manifestHash = manifest.ManifestHash;
+
             var isDLC = false;
             var exe = manifest.LaunchExecutable;
             AbsolutePath launch = new();
@@ -235,10 +234,12 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             else
                 launch = _fileSystem.FromUnsanitizedFullPath(loc).Combine(exe);
 
+            var sId = EGSGameId.From(id);
             var game = new EGSGame(
-                CatalogItemId: EGSGameId.From(id),
+                CatalogItemId: sId,
                 DisplayName: title,
                 InstallLocation: _fileSystem.FromUnsanitizedFullPath(loc),
+                ManifestHash: [ manifest.ManifestHash ?? sId + "_manifest" ],
                 CloudSaveFolder: new(),
                 InstallLaunch: launch,
                 IsInstalled: true,

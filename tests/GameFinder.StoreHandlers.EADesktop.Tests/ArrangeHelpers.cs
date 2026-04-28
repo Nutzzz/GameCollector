@@ -30,8 +30,7 @@ public partial class EADesktopTests
         return (handler, hardwareInfoProvider, dataFolder);
     }
 
-    [SuppressMessage("Design", "MA0051:Method is too long")]
-    private static IEnumerable<EADesktopGame> SetupGames(
+    private static EADesktopGame[] SetupGames(
         InMemoryFileSystem fs, IHardwareInfoProvider hardwareInfoProvider, AbsolutePath dataFolder)
     {
         var fixture = new Fixture();
@@ -80,7 +79,7 @@ public partial class EADesktopTests
         using (var aes = Aes.Create())
         {
             aes.Key = encryptionKey;
-            aes.IV = Decryption.CreateDecryptionIV();
+            aes.IV = [.. Decryption.CreateDecryptionIV()];
 
             var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 

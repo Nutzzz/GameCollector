@@ -1,16 +1,18 @@
-using System.Text.Json.Serialization;
 using JetBrains.Annotations;
+using System.Collections.Generic;
 
 namespace GameCollector.StoreHandlers.EGS;
 
 [UsedImplicitly]
 internal record ManifestFile(
+    string? CatalogItemId,
+    string? DisplayName,
+    string? InstallLocation,
+    string? ManifestHash,
+    string? MainGameCatalogItemId,
     int? FormatVersion,
     string? LaunchExecutable,
-    string? DisplayName,
     string? InstallationGuid,
-    string? InstallLocation,
-    string? CatalogItemId,
     string? AppName,
     string? MainGameAppName
 );

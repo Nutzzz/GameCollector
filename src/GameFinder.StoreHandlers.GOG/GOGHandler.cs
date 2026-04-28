@@ -76,7 +76,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
     /// <inheritdoc/>
     public override IEnumerable<OneOf<GOGGame, ErrorMessage>> FindAllGames(Settings? settings = null)
     {
-        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = new();
+        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = [];
 
         try
         {
@@ -85,22 +85,16 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
             using var gogKey = localMachine.OpenSubKey(GOGRegKey);
             if (gogKey is null)
             {
-                return new OneOf<GOGGame, ErrorMessage>[]
-                {
-                    new ErrorMessage($"Unable to open HKEY_LOCAL_MACHINE\\{GOGRegKey}"),
-                };
+                return [new ErrorMessage($"Unable to open HKEY_LOCAL_MACHINE\\{GOGRegKey}")];
             }
 
             var subKeyNames = gogKey.GetSubKeyNames().ToArray();
             if (subKeyNames.Length == 0)
             {
-                return new OneOf<GOGGame, ErrorMessage>[]
-                {
-                    new ErrorMessage($"Registry key {gogKey.GetName()} has no sub-keys"),
-                };
+                return [new ErrorMessage($"Registry key {gogKey.GetName()} has no sub-keys")];
             }
 
-            Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> installedGames = new();
+            Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> installedGames = [];
             foreach (var subKeyName in subKeyNames)
             {
                 var regGame = ParseSubKey(gogKey, subKeyName, settings?.BaseOnly);
@@ -164,10 +158,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
         }
         catch (Exception e)
         {
-            return new OneOf<GOGGame, ErrorMessage>[]
-            {
-                new ErrorMessage(e, "Exception looking for GOG games"),
-            };
+            return [new ErrorMessage(e, "Exception looking for GOG games")];
         }
     }
 
@@ -218,7 +209,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
 
             Nullable<GOGGameId> parentGameId = null;
             if (subKey.TryGetString("dependsOn", out var dependsOn) &&
-                long.TryParse(dependsOn, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rawParentGameId)
+                long.TryParse(dependsOn, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rawParentGameId))
             {
                 if (baseOnly == true)
                     return new ErrorMessage($"{subKey.GetName()} is a DLC");
@@ -250,8 +241,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 UninstallCommand: Path.IsPathRooted(uninst) ? _fileSystem.FromUnsanitizedFullPath(uninst) : new(),
                 IsInstalled: exePath != default && exePath.FileExists,
                 IsOwned: true,
-                SupportUrl: support ?? "",
-                ParentId: parentId
+                SupportUrl: support ?? ""
             );
         }
         catch (Exception e)

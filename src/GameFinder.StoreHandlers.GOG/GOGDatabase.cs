@@ -42,7 +42,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
         limitedDetailsId, releaseDate from Details
         */
 
-        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = new();
+        Dictionary<GOGGameId, OneOf<GOGGame, ErrorMessage>> games = [];
         var database = GetDatabaseFile(_fileSystem);
 
         if (!database.FileExists)
@@ -119,7 +119,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 var storeUrl = "";
                 var supportUrl = "";
                 var isHidden = false;
-                List<string> tags = new();
+                List<string> tags = [];
 
                 if (!string.IsNullOrEmpty(game.Links))
                 {
@@ -227,6 +227,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                         Id: id,
                         Name: name ?? (key ?? ""),
                         Path: new(),
+                        ParentGameId: parentId,
                         BuildId: 0,
                         LaunchUrl: $"goggalaxy://openGameView/{sId}",
                         IsInstalled: false,
@@ -234,7 +235,6 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                         IsHidden: isHidden,
                         Tags: tags,
                         MyRating: myRating,
-                        ParentId: parentId,
                         StoreUrl: storeUrl ?? "",
                         SupportUrl: supportUrl ?? "",
                         BoxArtUrl: imageUrl ?? "",
@@ -280,6 +280,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                                 Id: id,
                                 Name: name ?? (key ?? ""),
                                 Path: new(),
+                                ParentGameId: parentId,
                                 BuildId: buildId,
                                 LaunchUrl: $"goggalaxy://openGameView/{sId}",
                                 IsInstalled: false,
@@ -287,7 +288,6 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                                 IsHidden: isHidden,
                                 Tags: tags,
                                 MyRating: myRating,
-                                ParentId: parentId,
                                 BoxArtUrl: imageUrl ?? "",
                                 LogoUrl: imageWideUrl ?? "",
                                 IconUrl: iconUrl ?? ""));
@@ -368,6 +368,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                     Id: id,
                     Name: name ?? (key ?? ""),
                     Path: installPath,
+                    ParentGameId: parentId,
                     BuildId: buildId,
                     Launch: launchPath,
                     LaunchParam: launchParam,
@@ -379,7 +380,6 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                     IsHidden: isHidden,
                     Tags: tags,
                     MyRating: myRating,
-                    ParentId: parentId,
                     ReleaseDate: releaseDate,
                     BoxArtUrl: imageUrl ?? "",
                     LogoUrl: imageWideUrl ?? "",

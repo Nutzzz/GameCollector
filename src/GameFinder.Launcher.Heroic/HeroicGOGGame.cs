@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GameFinder.Common;
-using GameFinder.StoreHandlers.GOG;
-using GameFinder.Wine;
+using GameCollector.StoreHandlers.GOG;
+using GameCollector.Wine;
 using JetBrains.Annotations;
 using NexusMods.Paths;
 

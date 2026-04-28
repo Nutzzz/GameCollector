@@ -21,7 +21,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
         Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
     private static List<OneOf<EGSGame, ErrorMessage>> ParseCatCacheFile(IFileSystem fileSystem, Settings? settings = null)
     {
-        List<OneOf<EGSGame, ErrorMessage>> games = new();
+        List<OneOf<EGSGame, ErrorMessage>> games = [];
         var catalogPath = Path.Combine(GetFolderPath(SpecialFolder.CommonApplicationData),
             @"Epic\EpicGamesLauncher\Data\Catalog\catcache.bin");
         if (!File.Exists(catalogPath))
@@ -84,7 +84,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                     if (space.Equals("poodle", StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    List<string> genres = new();
+                    List<string> genres = [];
                     if (game.Categories is not null)
                     {
                         var isGame = false;
@@ -151,10 +151,12 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                         }
                     }
 
+                    var sId = EGSGameId.From(id);
                     games.Add(new EGSGame(
-                        CatalogItemId: EGSGameId.From(id),
+                        CatalogItemId: sId,
                         DisplayName: title,
                         InstallLocation: new(),
+                        ManifestHash: [sId + "_manifest"],
                         CloudSaveFolder: Path.IsPathRooted(savePath) ? fileSystem.FromUnsanitizedFullPath(savePath) : new(),
                         IsInstalled: false,
                         MainGame: mainGame,
@@ -179,8 +181,8 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
         IFileSystem fileSystem,
         Settings? settings = null)
     {
-        List<OneOf<EGSGame, ErrorMessage>> ownedList = new();
-        List<OneOf<EGSGame, ErrorMessage>> installedList = new();
+        List<OneOf<EGSGame, ErrorMessage>> ownedList = [];
+        List<OneOf<EGSGame, ErrorMessage>> installedList = [];
         Dictionary<string, EGSGameId> namespaces = new(StringComparer.OrdinalIgnoreCase);
 
         var ownedGames = ParseCatCacheFile(fileSystem, settings);
@@ -215,6 +217,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                 CatalogItemId: id,
                 DisplayName: installedDict[id].AsT0.DisplayName,
                 InstallLocation: installedDict[id].AsT0.InstallLocation,
+                ManifestHash: [],
                 CloudSaveFolder: game.AsT0.CloudSaveFolder,
                 InstallLaunch: installedDict[id].AsT0.InstallLaunch,
                 IsInstalled: true,

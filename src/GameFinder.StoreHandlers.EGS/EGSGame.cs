@@ -49,11 +49,11 @@ public record EGSGame(EGSGameId CatalogItemId,
              BaseGame: MainGame,
              Metadata: new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
              {
-                 ["ImageUrl"] = new() { ImageTallUrl },
-                 ["ImageWideUrl"] = new() { ImageUrl },
-                 ["Developers"] = new() { Developer },
-                 ["Genres"] = Categories?.ToList<string>() ?? new List<string>(),
-                 ["Namespace"] = new() { Namespace },
-                 ["AppId"] = new() { AppId },
-                 ["ManifestHash"] = new() { ManifestHash?.ToList<string>() ?? new List<string>(), },
+                 ["ImageUrl"] = [ImageTallUrl],
+                 ["ImageWideUrl"] = [ImageUrl],
+                 ["Developers"] = [Developer],
+                 ["Genres"] = Categories?.ToList() ?? [],
+                 ["Namespace"] = [Namespace],
+                 ["AppId"] = [AppId],
+                 ["ManifestHash"] = [.. ManifestHash],
              });
