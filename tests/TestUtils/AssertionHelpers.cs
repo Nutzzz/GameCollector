@@ -68,7 +68,7 @@ public static class AssertionHelpers
         var results = handler.FindAllGames().ToArray();
         var games = results.ShouldOnlyBeGames();
 
-        games.Should().Equal(expectedGames);
+        games.Should().BeEquivalentTo(expectedGames);
     }
 
     public static void ShouldFindAllGamesById<TGame, TId>(
@@ -82,7 +82,7 @@ public static class AssertionHelpers
         errors.Should().BeEmpty();
 
         results.Should().ContainKeys(expectedGames.Select(keySelector));
-        results.Should().ContainValues(expectedGames);
+        results.Values.Should().BeEquivalentTo(expectedGames);
     }
 
     public static void ShouldFindAllInterfacesGames<TGame, TId>(
@@ -94,6 +94,6 @@ public static class AssertionHelpers
         var results = handler.FindAllInterfaceGames().ToArray();
         var games = results.ShouldOnlyBeGames();
 
-        games.Should().AllBeOfType<TGame>().Which.Should().Equal(expectedGames);
+        games.Should().AllBeOfType<TGame>().Which.Should().BeEquivalentTo(expectedGames);
     }
 }

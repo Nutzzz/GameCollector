@@ -11,10 +11,10 @@ internal record Installed(
     [property: JsonPropertyName("is_dlc")] bool IsDlc,
     [property: JsonPropertyName("version")] string? Version,
     [property: JsonPropertyName("appName")] string AppName,
-    [property: JsonPropertyName("installedDLCs")] IReadOnlyList<object> InstalledDLCs,
+    [property: JsonPropertyName("installedDLCs")] IReadOnlyList<string> InstalledDLCs,
     [property: JsonPropertyName("language")] string Language,
     [property: JsonPropertyName("versionEtag")] string VersionEtag,
-    [property: JsonPropertyName("buildId")] ulong BuildId,
+    [property: JsonPropertyName("buildId")] string BuildId,
     [property: JsonPropertyName("pinnedVersion")] bool PinnedVersion
 );
 

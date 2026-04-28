@@ -15,6 +15,9 @@ using OneOf;
 
 namespace GameCollector.StoreHandlers.EGS;
 
+[UsedImplicitly]
+internal record ManifestFile(string CatalogItemId, string DisplayName, string InstallLocation, string ManifestHash, string MainGameCatalogItemId);
+
 /// <summary>
 /// Handler for finding games installed with the Epic Games Store.
 /// </summary>
@@ -114,6 +117,38 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
             return allGames;
         }
 
+        /*
+        // TODO: INVESTIGATE THIS CHANGED UPSTREAM METHOD
+        // Parse all the files
+        var allItems = itemFiles.Select(DeserializeItem).ToList();
+
+        // Group by the MainGameCatalogItemId, and collect all the manifest hashes
+        // for each game. If a game has multiple DLCs, all the DLCs will reference the
+        // same MainGameCatalogItemId.
+        var itemsGrouped = allItems
+            .Where(f => f.Match(f0: static _ => true, f1: static _ => false))
+            .Select(f => f.AsT0)
+            .GroupBy(c => c.MainGameCatalogItemId, StringComparer.OrdinalIgnoreCase)
+            .Select(group =>
+            {
+                return new EGSGame(
+                    EGSGameId.From(group.Key),
+                    group.First().DisplayName,
+                    _fileSystem.FromUnsanitizedFullPath(group.First().InstallLocation),
+                    group.Select(g => g.ManifestHash).ToArray());
+            });
+
+        foreach (var game in itemsGrouped)
+        {
+            yield return game;
+        }
+
+        foreach (var errorMessage in allItems
+                     .Where(f => f.Match(f0: static _ => false, f1: static _ => true)))
+        {
+            yield return errorMessage.AsT1;
+        }
+        */
         Dictionary<EGSGameId, OneOf<EGSGame, ErrorMessage>> installedDict = new();
         foreach (var itemFile in itemFiles)
         {
@@ -140,6 +175,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
         "Trimming",
         "IL2026:Members annotated with \'RequiresUnreferencedCodeAttribute\' require dynamic access otherwise can break functionality when trimming application code",
         Justification = $"{nameof(JsonSerializerOptions)} uses {nameof(SourceGenerationContext)} for type information.")]
+    //private OneOf<ManifestFile, ErrorMessage> DeserializeItem(AbsolutePath itemFile)
     private OneOf<EGSGame, ErrorMessage> DeserializeGame(AbsolutePath itemFile, FormatPolicy formatPolicy, bool? baseOnly = false)
     {
         using var stream = _fileSystem.ReadFile(itemFile);
@@ -208,6 +244,7 @@ public partial class EGSHandler : AHandler<EGSGame, EGSGameId>
                 IsInstalled: true,
                 MainGame: isDLC ? (!isDLC).ToString() : null);
 
+            //return manifest;
             return game;
         }
         catch (Exception e)

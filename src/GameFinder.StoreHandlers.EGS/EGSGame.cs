@@ -13,6 +13,7 @@ namespace GameCollector.StoreHandlers.EGS;
 /// <param name="CatalogItemId"></param>
 /// <param name="DisplayName"></param>
 /// <param name="InstallLocation"></param>
+/// <param name="ManifestHash"></param>
 /// <param name="CloudSaveFolder"></param>
 /// <param name="InstallLaunch"></param>
 /// <param name="IsInstalled"></param>
@@ -27,6 +28,7 @@ namespace GameCollector.StoreHandlers.EGS;
 public record EGSGame(EGSGameId CatalogItemId,
                       string DisplayName,
                       AbsolutePath InstallLocation,
+                      IReadOnlyList<string> ManifestHash,
                       AbsolutePath CloudSaveFolder = default,
                       AbsolutePath InstallLaunch = default,
                       bool IsInstalled = true,
@@ -53,4 +55,5 @@ public record EGSGame(EGSGameId CatalogItemId,
                  ["Genres"] = Categories?.ToList<string>() ?? new List<string>(),
                  ["Namespace"] = new() { Namespace },
                  ["AppId"] = new() { AppId },
+                 ["ManifestHash"] = new() { ManifestHash?.ToList<string>() ?? new List<string>(), },
              });

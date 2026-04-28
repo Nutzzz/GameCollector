@@ -21,8 +21,9 @@ public partial class GOGTests
         }
     }
 
-    [Theory(Skip = "Fix me"), AutoFileSystem]
-    public void Test_ShouldError_MissingGameName(InMemoryFileSystem fileSystem, InMemoryRegistry registry, string keyName, long gameId)
+    //[Theory(Skip = "Fix me"), AutoFileSystem]
+    [Theory, AutoFileSystem]
+    public void Test_ShouldError_MissingGameName(IFileSystem fileSystem, InMemoryRegistry registry, string keyName, long gameId)
     {
         var (handler, gogKey) = SetupHandler(fileSystem, registry);
 

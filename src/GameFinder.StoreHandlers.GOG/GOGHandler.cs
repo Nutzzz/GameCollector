@@ -191,6 +191,11 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 return new ErrorMessage($"The value \"gameID\" of {subKey.GetName()} is not a number: \"{sId}\"");
             }
             var id = GOGGameId.From(lId);
+            /*
+            //TODO: Investigate this upstream change
+            var idResult = GetId(subKey, subKeyName);
+            if (idResult.IsT1) return idResult.AsT1;
+            */
 
             if (!subKey.TryGetString("gameName", out var name))
             {
@@ -211,16 +216,15 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 return new ErrorMessage($"The value \"buildId\" of {subKey.GetName()} is not a number: \"{sBuildId}\"");
             }
 
-            GOGGameId parentId = default;
-            subKey.TryGetString("dependsOn", out var sParent);
-            if (!string.IsNullOrEmpty(sParent))
+            Nullable<GOGGameId> parentGameId = null;
+            if (subKey.TryGetString("dependsOn", out var dependsOn) &&
+                long.TryParse(dependsOn, NumberStyles.Integer, CultureInfo.InvariantCulture, out var rawParentGameId)
             {
                 if (baseOnly == true)
                     return new ErrorMessage($"{subKey.GetName()} is a DLC");
-
-                if (long.TryParse(sParent, NumberStyles.Integer, CultureInfo.InvariantCulture, out var lParent))
-                    parentId = GOGGameId.From(lParent);
+                parentGameId = GOGGameId.From(rawParentGameId);
             }
+
             subKey.TryGetString("exe", out var exe);
             //subKey.TryGetString("launchCommand", out var launch);
             subKey.TryGetString("launchParam", out var launchParam);
@@ -238,6 +242,7 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
                 Name: name,
                 Path: Path.IsPathRooted(path) ? _fileSystem.FromUnsanitizedFullPath(path) : new(),
                 BuildId: buildId,
+                ParentGameId: parentGameId,
                 Launch: exePath,
                 LaunchUrl: $"goggalaxy://openGameView/{sId}",
                 LaunchParam: launchParam ?? "",
@@ -253,5 +258,38 @@ public partial class GOGHandler : AHandler<GOGGame, GOGGameId>
         {
             return new ErrorMessage(e, $"Exception while parsing registry key {gogKey}\\{subKeyName}");
         }
+    }
+
+    private static OneOf<long, ErrorMessage> GetId(IRegistryKey subKey, string subKeyName)
+    {
+        ErrorMessage? subKeyError = null;
+        ErrorMessage? idError = null;
+
+        if (!long.TryParse(subKeyName, CultureInfo.InvariantCulture, out var subKeyId))
+        {
+            subKeyError = new ErrorMessage($"`{subKeyName}` of `{subKey.GetName()}` is not a number!");
+        }
+
+        long id = -1;
+        if (subKey.TryGetString("gameID", out var sID))
+        {
+            if (!long.TryParse(sID, CultureInfo.InvariantCulture, out id))
+            {
+                idError = new ErrorMessage($"The value \"gameID\" of {subKey.GetName()} is not a number: \"{sID}\"");
+            }
+        }
+        else
+        {
+            idError = new ErrorMessage($"{subKey.GetName()} doesn't have a string value \"gameID\"");
+        }
+
+        if (subKeyError.HasValue && idError.HasValue)
+        {
+            return new ErrorMessage($"{subKeyError.Value} | {idError.Value}");
+        }
+
+        if (subKeyError.HasValue && !idError.HasValue) return id;
+        if (!subKeyError.HasValue && idError.HasValue) return subKeyId;
+        return id;
     }
 }
