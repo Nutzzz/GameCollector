@@ -58,6 +58,7 @@
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" />
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
         <TrimmerRootAssembly Include="CommandLine" />
 
         <PackageReference Include="NLog" />
